@@ -1,6 +1,141 @@
+$yecpink: #C6025F;
+$yecdarkblue: #000C68;
+$yecblack: #1A1A1A;
+
+:root {
+  --yecpink: #C6025F;
+  --yecdarkblue: #000C68;
+  --yecblack: #1A1A1A;
+}
+
 body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 100;
   background: white;  
   margin: 0;
+  color: $yecblack;
+}
+
+.yec-site-header {
+  background: #fff;
+}
+
+.yec-site-header__inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.yec-site-logo {
+  display: inline-flex;
+  align-items: center;
+}
+
+
+
+.yec-site-logo a.custom-logo-link img,
+.yec-site-logo img.custom-logo {
+  display: block;
+  width: 120px !important;
+  max-width: 120px !important;
+  max-height: 100px !important;
+  object-fit: contain;
+}
+
+.yec-site-logo__text,
+.yec-site-logo__text:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+.yec-site-logo__text {
+  font-size: 20px;
+  font-weight: 100;
+}
+
+.yec-main-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.yec-main-menu a {
+  text-decoration: none;
+  color: #1f1f1f;
+  font-weight: 300;
+  color: $yecblack;
+  text-transform: uppercase;
+}
+.yec-main-menu a:hover {
+  color: $yecpink;
+}
+
+.yec-main-menu .menu-item {
+  position: relative;
+}
+
+.yec-main-menu .sub-menu {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  min-width: 180px;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  color: $yecblack;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+ 
+}
+
+.yec-main-menu .sub-menu li a {
+  display: block;
+  font-weight: 300;
+  padding-top: 10px;
+}
+
+.yec-main-menu .menu-item:hover > .sub-menu,
+.yec-main-menu .menu-item:focus-within > .sub-menu,
+.yec-main-menu .menu-item.is-open > .sub-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media (max-width: 860px) {
+  .yec-site-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .yec-main-menu {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .yec-main-menu .sub-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    border: 0;
+    box-shadow: none;
+    padding: 6px 0 0;
+  }
+
+  .yec-main-menu .sub-menu li a {
+    padding: 4px 0 4px 10px;
+  }
 }
 
 .yec-home-logo {
@@ -12,8 +147,10 @@ body {
 
 .yec-home-logo .custom-logo {
   display: block;
-  max-width: min(90vw, 520px);
-  width: 100%; 
-  height: auto; 
+  width: 120px !important;
+  height: 120px !important;
+  max-width: 120px !important;
+  max-height: 120px !important;
+  object-fit: contain;
   
 }
