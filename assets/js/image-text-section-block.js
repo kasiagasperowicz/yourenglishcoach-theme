@@ -8,15 +8,15 @@
   var PanelBody = components.PanelBody;
   var TextControl = components.TextControl;
   var SelectControl = components.SelectControl;
-  var Button = components.Button;
   var BaseControl = components.BaseControl;
+  var Button = components.Button;
   var createElement = element.createElement;
   var __ = i18n.__;
 
-  registerBlockType('yec/hero-section', {
-    title: __('YEC Hero Section', 'yourenglishcoachtheme'),
-    description: __('Sekcja z eyebrow, title, subtitle, CTA i szarym tlem.', 'yourenglishcoachtheme'),
-    icon: 'cover-image',
+  registerBlockType('yec/image-text-section', {
+    title: __('YEC Image + Text', 'yourenglishcoachtheme'),
+    description: __('Sekcja 50/50 z obrazem 1:1 i trescia.', 'yourenglishcoachtheme'),
+    icon: 'align-pull-left',
     category: 'design',
     supports: {
       html: false,
@@ -24,23 +24,23 @@
     attributes: {
       eyebrow: {
         type: 'string',
-        default: 'Angielski dla doroslych i mlodziezy',
+        default: 'Poznajmy sie',
       },
       title: {
         type: 'string',
-        default: 'Mow po angielsku pewnie i swobodnie',
+        default: 'Angielski dopasowany do Twoich celow',
       },
-      subtitle: {
+      contentText: {
         type: 'string',
-        default: 'Indywidualne lekcje online, ktore pomoga Ci w pracy, na egzaminie i w codziennej komunikacji.',
+        default: 'Pomagam doroslym i mlodziezy rozwijac swobode mowienia, slownictwo i pewnosc siebie.',
       },
       ctaText: {
         type: 'string',
-        default: 'Umow konsultacje',
+        default: 'Sprawdz oferte',
       },
       ctaUrl: {
         type: 'string',
-        default: '/kontakt',
+        default: '/oferta',
       },
       imageId: {
         type: 'number',
@@ -55,14 +55,14 @@
       },
       layout: {
         type: 'string',
-        default: 'text-first',
+        default: 'image-left',
       },
     },
     edit: function (props) {
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
       var blockProps = useBlockProps({
-        className: 'yec-editable-section yec-editable-section--' + (attributes.layout || 'text-first'),
+        className: 'yec-image-text-section yec-image-text-section--' + (attributes.layout || 'image-left'),
       });
 
       var onSelectImage = function (media) {
@@ -94,11 +94,11 @@
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Kolejnosc elementow', 'yourenglishcoachtheme'),
-              value: attributes.layout || 'text-first',
+              label: __('Kolejnosc kolumn', 'yourenglishcoachtheme'),
+              value: attributes.layout || 'image-left',
               options: [
-                { label: __('Tekst + obrazek', 'yourenglishcoachtheme'), value: 'text-first' },
-                { label: __('Obrazek + tekst', 'yourenglishcoachtheme'), value: 'image-first' },
+                { label: __('Obrazek + tekst', 'yourenglishcoachtheme'), value: 'image-left' },
+                { label: __('Tekst + obrazek', 'yourenglishcoachtheme'), value: 'image-right' },
               ],
               onChange: function (value) {
                 setAttributes({ layout: value });
@@ -113,7 +113,6 @@
             },
             createElement(TextControl, {
               label: __('Tekst przycisku', 'yourenglishcoachtheme'),
-              help: __('To jest tekst widoczny na przycisku CTA.', 'yourenglishcoachtheme'),
               value: attributes.ctaText,
               onChange: function (value) {
                 setAttributes({ ctaText: value });
@@ -121,7 +120,6 @@
             }),
             createElement(TextControl, {
               label: __('Link przycisku (URL)', 'yourenglishcoachtheme'),
-              help: __('Wpisz pelny adres lub sciezke, np. /kontakt.', 'yourenglishcoachtheme'),
               value: attributes.ctaUrl,
               onChange: function (value) {
                 setAttributes({ ctaUrl: value });
@@ -154,41 +152,52 @@
             }, __('Usun obraz', 'yourenglishcoachtheme')) : null
           )
         ),
+        attributes.imageUrl
+          ? createElement(
+              'div',
+              { className: 'yec-image-text-section__media', 'aria-hidden': 'true' },
+              createElement('img', {
+                className: 'yec-image-text-section__image',
+                src: attributes.imageUrl,
+                alt: attributes.imageAlt || '',
+              })
+            )
+          : null,
         createElement(
           'div',
-          { className: 'yec-editable-section__content' },
+          { className: 'yec-image-text-section__content' },
           createElement(RichText, {
             tagName: 'p',
-            className: 'yec-editable-section__eyebrow',
+            className: 'yec-image-text-section__eyebrow',
             value: attributes.eyebrow,
-            placeholder: __('Angielski dla doroslych i mlodziezy', 'yourenglishcoachtheme'),
+            placeholder: __('Poznajmy sie', 'yourenglishcoachtheme'),
             onChange: function (value) {
               setAttributes({ eyebrow: value });
             },
           }),
           createElement(RichText, {
-            tagName: 'h1',
-            className: 'yec-editable-section__title',
+            tagName: 'h2',
+            className: 'yec-image-text-section__title',
             value: attributes.title,
-            placeholder: __('Mow po angielsku pewnie i swobodnie', 'yourenglishcoachtheme'),
+            placeholder: __('Angielski dopasowany do Twoich celow', 'yourenglishcoachtheme'),
             onChange: function (value) {
               setAttributes({ title: value });
             },
           }),
           createElement(RichText, {
             tagName: 'p',
-            className: 'yec-editable-section__subtitle',
-            value: attributes.subtitle,
-            placeholder: __('Indywidualne lekcje online dopasowane do Twoich celow.', 'yourenglishcoachtheme'),
+            className: 'yec-image-text-section__text',
+            value: attributes.contentText,
+            placeholder: __('Opisz jak wyglada wspolpraca i dla kogo sa lekcje.', 'yourenglishcoachtheme'),
             onChange: function (value) {
-              setAttributes({ subtitle: value });
+              setAttributes({ contentText: value });
             },
           }),
           createElement(
             BaseControl,
             {
               label: __('Przycisk CTA', 'yourenglishcoachtheme'),
-              help: __('Tekst i link edytujesz w prawym panelu w sekcji Ustawienia CTA.', 'yourenglishcoachtheme'),
+              help: __('Tekst i link edytujesz w prawym panelu.', 'yourenglishcoachtheme'),
             },
             createElement(
               'a',
@@ -199,34 +208,9 @@
                   event.preventDefault();
                 },
               },
-              attributes.ctaText || __('Umow konsultacje', 'yourenglishcoachtheme')
+              attributes.ctaText || __('Sprawdz oferte', 'yourenglishcoachtheme')
             )
           )
-        ),
-        attributes.imageUrl
-          ? createElement(
-              'div',
-              { className: 'yec-editable-section__media', 'aria-hidden': 'true' },
-              createElement('img', {
-                className: 'yec-editable-section__image',
-                src: attributes.imageUrl,
-                alt: attributes.imageAlt || '',
-              })
-            )
-          : null,
-        createElement(MediaUploadCheck, {},
-          createElement(MediaUpload, {
-            onSelect: onSelectImage,
-            allowedTypes: ['image'],
-            value: attributes.imageId,
-            render: function (renderProps) {
-              return createElement(Button, {
-                variant: 'secondary',
-                onClick: renderProps.open,
-                style: { margin: '12px 0 0' },
-              }, attributes.imageUrl ? __('Zmien obraz', 'yourenglishcoachtheme') : __('Dodaj obraz', 'yourenglishcoachtheme'));
-            },
-          })
         )
       );
     },
