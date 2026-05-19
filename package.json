@@ -1,0 +1,27 @@
+{
+  "name": "yourenglishcoachtheme",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kasiagasperowicz/yourenglishcoach-theme.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kasiagasperowicz/yourenglishcoach-theme/issues"
+  },
+  "homepage": "https://github.com/kasiagasperowicz/yourenglishcoach-theme#readme",
+  "dependencies": {
+    "sass": "^1.99.0"
+  },
+  "devDependencies": {
+    "vite": "^4.5.14"
+  }
+}
