@@ -1,20 +1,28 @@
 $yecpink: #C6025F;
 $yecdarkblue: #000C68;
 $yecblack: #1A1A1A;
+$yecsoftpink: #F7EEF2;
+$yecctapink: #B84C80;
 
 :root {
   --yecpink: #C6025F;
   --yecdarkblue: #000C68;
   --yecblack: #1A1A1A;
+  --yecsoftpink: #F7EEF2;
+  --yecctapink: #B84C80;
 }
+
+// ─── Base ─────────────────────────────────────────────────────────────────
 
 body {
   font-family: 'Lato', sans-serif;
   font-weight: 100;
-  background: white;  
+  background: white;
   margin: 0;
   color: $yecblack;
 }
+
+// ─── Header ───────────────────────────────────────────────────────────────
 
 .yec-site-header {
   background: #fff;
@@ -35,8 +43,6 @@ body {
   align-items: center;
 }
 
-
-
 .yec-site-logo a.custom-logo-link img,
 .yec-site-logo img.custom-logo {
   display: block;
@@ -52,11 +58,19 @@ body {
   color: inherit;
 }
 
-
 .yec-site-logo__text {
   font-size: 20px;
   font-weight: 100;
 }
+
+@media (max-width: 860px) {
+  .yec-site-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+// ─── Main Menu ────────────────────────────────────────────────────────────
 
 .yec-main-menu {
   list-style: none;
@@ -69,11 +83,11 @@ body {
 
 .yec-main-menu a {
   text-decoration: none;
-  color: #1f1f1f;
-  font-weight: 300;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
   color: $yecblack;
-  text-transform: uppercase;
 }
+
 .yec-main-menu a:hover {
   color: $yecpink;
 }
@@ -95,7 +109,6 @@ body {
   visibility: hidden;
   transform: translateY(6px);
   transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
- 
 }
 
 .yec-main-menu .sub-menu li a {
@@ -113,11 +126,6 @@ body {
 }
 
 @media (max-width: 860px) {
-  .yec-site-header__inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .yec-main-menu {
     flex-wrap: wrap;
     gap: 16px;
@@ -138,19 +146,90 @@ body {
   }
 }
 
-.yec-home-logo {
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+// ─── CTA Button ───────────────────────────────────────────────────────────
+
+.yec-cta__button {
+  display: inline-block;
+  padding: 14px 36px;
+  background: $yecctapink;
+  color: #fff;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: background 0.2s ease;
+  border-radius: 30px;
+  text-transform: uppercase;
+
+  &:hover {
+    background: $yecpink;
+  }
 }
 
-.yec-home-logo .custom-logo {
+// ─── Editable Section ─────────────────────────────────────────────────────
+
+.yec-editable-section {
+  width: 100%;
+}
+
+.yec-editable-section__content {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 48px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap:10px;
+ 
+}
+
+.yec-editable-section__eyebrow {
+  font-family: 'Lato', sans-serif;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
+   color: $yecblack;
+}
+
+.yec-editable-section__title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+}
+.yec-editable-section__subtitle {
+  font-family: 'Lato', sans-serif;
+  padding-bottom: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  color: $yecblack;
+  max-width: 60%;
+  text-align: center;
+  font-weight: 300;
+}
+
+.yec-editable-section__eyebrow,
+.yec-editable-section__title,
+.yec-editable-section__subtitle {
+  margin: 0;
+}
+
+.yec-editable-section__media {
+  max-width: 1120px;
+  margin: 0 auto;
+  min-height: 320px;
+  background: #e3e3e3;
+  border-top-right-radius: 100px;
+  border-bottom-left-radius: 100px;
+  aspect-ratio: 1.6;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.yec-editable-section__image {
   display: block;
-  width: 120px !important;
-  height: 120px !important;
-  max-width: 120px !important;
-  max-height: 120px !important;
-  object-fit: contain;
-  
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+   aspect-ratio: 1.6;
 }
