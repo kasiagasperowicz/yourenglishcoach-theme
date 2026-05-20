@@ -64,6 +64,13 @@ function yec_resource_hints($urls, $relation_type) {
 
 add_filter('wp_resource_hints', 'yec_resource_hints', 10, 2);
 
+function yec_allow_svg_upload($mimes) {
+  $mimes['svg'] = 'image/svg+xml';
+  return $mimes;
+}
+
+add_filter('upload_mimes', 'yec_allow_svg_upload');
+
 function yec_render_hero_section_block($attributes) {
   $eyebrow  = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title    = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
@@ -154,29 +161,45 @@ function yec_render_benefits_section_block($attributes) {
   $eyebrow  = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title    = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
   $subtitle = isset($attributes['subtitle']) ? wp_kses_post($attributes['subtitle']) : '';
+  $has_background = !empty($attributes['hasBackground']);
+  $background_color = isset($attributes['backgroundColor']) ? sanitize_hex_color($attributes['backgroundColor']) : '';
+  $section_class = 'yec-benefits-section' . ($has_background ? ' yec-benefits-section--with-bg' : '');
+  $section_style = '';
+
+  if ($has_background && $background_color) {
+    $section_style = '--yec-benefits-bg:' . $background_color . ';';
+  }
 
   $cards = [
     [
       'icon'  => isset($attributes['item1Icon']) ? sanitize_text_field($attributes['item1Icon']) : '',
+      'icon_image' => isset($attributes['item1IconImageUrl']) ? esc_url($attributes['item1IconImageUrl']) : '',
+      'icon_alt' => isset($attributes['item1IconImageAlt']) ? sanitize_text_field($attributes['item1IconImageAlt']) : '',
       'title' => isset($attributes['item1Title']) ? sanitize_text_field($attributes['item1Title']) : '',
     ],
     [
       'icon'  => isset($attributes['item2Icon']) ? sanitize_text_field($attributes['item2Icon']) : '',
+      'icon_image' => isset($attributes['item2IconImageUrl']) ? esc_url($attributes['item2IconImageUrl']) : '',
+      'icon_alt' => isset($attributes['item2IconImageAlt']) ? sanitize_text_field($attributes['item2IconImageAlt']) : '',
       'title' => isset($attributes['item2Title']) ? sanitize_text_field($attributes['item2Title']) : '',
     ],
     [
       'icon'  => isset($attributes['item3Icon']) ? sanitize_text_field($attributes['item3Icon']) : '',
+      'icon_image' => isset($attributes['item3IconImageUrl']) ? esc_url($attributes['item3IconImageUrl']) : '',
+      'icon_alt' => isset($attributes['item3IconImageAlt']) ? sanitize_text_field($attributes['item3IconImageAlt']) : '',
       'title' => isset($attributes['item3Title']) ? sanitize_text_field($attributes['item3Title']) : '',
     ],
     [
       'icon'  => isset($attributes['item4Icon']) ? sanitize_text_field($attributes['item4Icon']) : '',
+      'icon_image' => isset($attributes['item4IconImageUrl']) ? esc_url($attributes['item4IconImageUrl']) : '',
+      'icon_alt' => isset($attributes['item4IconImageAlt']) ? sanitize_text_field($attributes['item4IconImageAlt']) : '',
       'title' => isset($attributes['item4Title']) ? sanitize_text_field($attributes['item4Title']) : '',
     ],
   ];
 
   ob_start();
   ?>
-  <section class="yec-benefits-section" aria-label="Co zyskujesz">
+  <section class="<?php echo esc_attr($section_class); ?>"<?php echo $section_style ? ' style="' . esc_attr($section_style) . '"' : ''; ?> aria-label="Co zyskujesz">
     <div class="yec-benefits-section__header">
       <?php if ($eyebrow) : ?>
         <p class="yec-benefits-section__eyebrow"><?php echo esc_html($eyebrow); ?></p>
@@ -197,7 +220,11 @@ function yec_render_benefits_section_block($attributes) {
           continue;
         } ?>
         <article class="yec-benefits-section__card">
-          <?php if ($card['icon']) : ?>
+          <?php if ($card['icon_image']) : ?>
+            <span class="yec-benefits-section__icon">
+              <img class="yec-benefits-section__icon-image" src="<?php echo esc_url($card['icon_image']); ?>" alt="<?php echo esc_attr($card['icon_alt']); ?>">
+            </span>
+          <?php elseif ($card['icon']) : ?>
             <span class="yec-benefits-section__icon" aria-hidden="true"><?php echo esc_html($card['icon']); ?></span>
           <?php endif; ?>
           <?php if ($card['title']) : ?>
@@ -212,10 +239,101 @@ function yec_render_benefits_section_block($attributes) {
   return ob_get_clean();
 }
 
+function yec_render_google_reviews_block($attributes) {
+  $google_reviews_url = 'https://www.google.com/search?sca_esv=78843e6f5da49b15&hl=pl-PL&sxsrf=ANbL-n4lRVg8a2Xuepq-7_LrQCoUlgoZhw:1779277099623&q=monika+ra%C5%BAniewska+-+your+english+coach+pozna%C5%84+opinie&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOT3MlEa_UxfvZNqakWrtPKV9WiC7rZ1BvPHw2VXhsgHsHIlVBelYZKx_DIUBceaSS9Qie64%3D&uds=ALYpb_msCbf7eOd7scXyYS6_3dkBohr0WYMWeEBCRCBE_88Ir_8L3k54yrEZSe370VSNb7o7w8J9wMw_9YpB55Lg1-K2t45bPeJYdZzUUVE5bEQ2eLvftOz6QxB44CUUiyz12P-3hyp0iI8r0PaRyHEjpnRToigJBQ&sa=X&ved=2ahUKEwiXpuvb48eUAxUdORAIHTQeODAQ3PALegQIOxAF&biw=1710&bih=995&dpr=1';
+  $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $has_background = !empty($attributes['hasBackground']);
+  $background_color = isset($attributes['backgroundColor']) ? sanitize_hex_color($attributes['backgroundColor']) : '';
+  $background_image_url = isset($attributes['backgroundImageUrl']) ? esc_url_raw((string) $attributes['backgroundImageUrl']) : '';
+  $section_class = 'yec-google-reviews' . ($has_background ? ' yec-google-reviews--with-bg' : '');
+  $section_style = '';
+  $style_parts = [];
+
+  if ($has_background && $background_color) {
+    $style_parts[] = '--yec-google-reviews-bg-color:' . $background_color;
+  }
+
+  if ($has_background && $background_image_url) {
+    $style_parts[] = '--yec-google-reviews-bg-image:url(' . $background_image_url . ')';
+  }
+
+  if (!empty($style_parts)) {
+    $section_style = implode(';', $style_parts) . ';';
+  }
+
+  $cards = isset($attributes['cards']) && is_array($attributes['cards']) ? $attributes['cards'] : [];
+
+  $cards = array_values(array_filter($cards, function ($card) {
+    if (!is_array($card)) {
+      return false;
+    }
+
+    $text = isset($card['text']) ? trim((string) $card['text']) : '';
+    return '' !== $text;
+  }));
+
+  if (empty($cards)) {
+    return '';
+  }
+
+  ob_start();
+  ?>
+  <section class="<?php echo esc_attr($section_class); ?>"<?php echo $section_style ? ' style="' . esc_attr($section_style) . '"' : ''; ?> aria-label="Opinie Google">
+    <?php if ($section_title) : ?>
+      <h2 class="yec-google-reviews__section-title"><?php echo esc_html($section_title); ?></h2>
+    <?php endif; ?>
+    <div class="yec-google-reviews__viewport">
+      <div class="yec-google-reviews__track" data-cards="<?php echo esc_attr((string) count($cards)); ?>">
+        <?php foreach ($cards as $card) : ?>
+          <?php
+          $photo_url = isset($card['photoUrl']) ? esc_url((string) $card['photoUrl']) : '';
+          $photo_alt = isset($card['photoAlt']) ? sanitize_text_field((string) $card['photoAlt']) : '';
+          $stars_raw = isset($card['stars']) ? (int) $card['stars'] : 5;
+          $stars = max(1, min(5, $stars_raw));
+          $text = isset($card['text']) ? wp_kses_post((string) $card['text']) : '';
+          $author = isset($card['author']) ? sanitize_text_field((string) $card['author']) : '';
+          $card_review_url = isset($card['reviewUrl']) ? esc_url((string) $card['reviewUrl']) : '';
+          $card_link = $card_review_url ? $card_review_url : $google_reviews_url;
+          ?>
+          <a class="yec-google-reviews__card" href="<?php echo esc_url($card_link); ?>" target="_blank" rel="noopener noreferrer">
+            <div class="yec-google-reviews__meta">
+              <span class="yec-google-reviews__avatar">
+                <?php if ($photo_url) : ?>
+                  <img src="<?php echo esc_url($photo_url); ?>" alt="<?php echo esc_attr($photo_alt); ?>">
+                <?php endif; ?>
+              </span>
+              <span class="yec-google-reviews__stars" aria-label="<?php echo esc_attr($stars); ?> na 5 gwiazdek">
+                <?php for ($i = 1; $i <= 5; $i++) : ?>
+                  <span class="yec-google-reviews__star<?php echo $i <= $stars ? ' is-filled' : ''; ?>">★</span>
+                <?php endfor; ?>
+              </span>
+            </div>
+            <p class="yec-google-reviews__text"><?php echo wp_kses_post($text); ?></p>
+            <?php if ($author) : ?>
+              <p class="yec-google-reviews__author"><?php echo esc_html($author); ?></p>
+            <?php endif; ?>
+          </a>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
+    <?php if (count($cards) > 4) : ?>
+      <div class="yec-google-reviews__controls" aria-hidden="true">
+        <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--prev" data-direction="prev">‹</button>
+        <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--next" data-direction="next">›</button>
+      </div>
+    <?php endif; ?>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
 function yec_register_custom_blocks() {
   $editor_script_path = get_template_directory() . '/assets/js/hero-section-block.js';
   $image_text_script_path = get_template_directory() . '/assets/js/image-text-section-block.js';
   $benefits_script_path = get_template_directory() . '/assets/js/benefits-section-block.js';
+  $google_reviews_script_path = get_template_directory() . '/assets/js/google-reviews-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -226,6 +344,10 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($benefits_script_path)) {
+    return;
+  }
+
+  if (!file_exists($google_reviews_script_path)) {
     return;
   }
 
@@ -250,6 +372,14 @@ function yec_register_custom_blocks() {
     get_template_directory_uri() . '/assets/js/benefits-section-block.js',
     ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
     filemtime($benefits_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-google-reviews-block',
+    get_template_directory_uri() . '/assets/js/google-reviews-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($google_reviews_script_path),
     true
   );
 
@@ -353,9 +483,28 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => 'Skupiamy sie na praktycznych efektach, ktore wykorzystasz od razu.',
       ],
+      'hasBackground' => [
+        'type'    => 'boolean',
+        'default' => false,
+      ],
+      'backgroundColor' => [
+        'type'    => 'string',
+        'default' => '#F7EEF2',
+      ],
       'item1Icon' => [
         'type'    => 'string',
         'default' => '🎯',
+      ],
+      'item1IconImageId' => [
+        'type' => 'number',
+      ],
+      'item1IconImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'item1IconImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
       ],
       'item1Title' => [
         'type'    => 'string',
@@ -365,6 +514,17 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => '🗣️',
       ],
+      'item2IconImageId' => [
+        'type' => 'number',
+      ],
+      'item2IconImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'item2IconImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
       'item2Title' => [
         'type'    => 'string',
         'default' => 'Wieksza swoboda w mowieniu',
@@ -372,6 +532,17 @@ function yec_register_custom_blocks() {
       'item3Icon' => [
         'type'    => 'string',
         'default' => '📈',
+      ],
+      'item3IconImageId' => [
+        'type' => 'number',
+      ],
+      'item3IconImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'item3IconImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
       ],
       'item3Title' => [
         'type'    => 'string',
@@ -381,9 +552,50 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => '💼',
       ],
+      'item4IconImageId' => [
+        'type' => 'number',
+      ],
+      'item4IconImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'item4IconImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
       'item4Title' => [
         'type'    => 'string',
         'default' => 'Przygotowanie do pracy i egzaminow',
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/google-reviews', [
+    'editor_script'   => 'yec-google-reviews-block',
+    'render_callback' => 'yec_render_google_reviews_block',
+    'attributes'      => [
+      'sectionTitle' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'hasBackground' => [
+        'type'    => 'boolean',
+        'default' => false,
+      ],
+      'backgroundColor' => [
+        'type'    => 'string',
+        'default' => '#F7EEF2',
+      ],
+      'backgroundImageId' => [
+        'type' => 'number',
+      ],
+      'backgroundImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'cards' => [
+        'type'    => 'array',
+        'default' => [],
       ],
     ],
   ]);
