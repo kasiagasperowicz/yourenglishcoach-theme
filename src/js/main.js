@@ -279,14 +279,24 @@ reviewSections.forEach((section) => {
 	rebuildLoop();
 });
 
-const parallaxSections = document.querySelectorAll('.yec-parallax-image[data-parallax-enabled="1"]');
+const parallaxItems = [
+	...Array.from(document.querySelectorAll('.yec-parallax-image[data-parallax-enabled="1"]')).map((section) => ({
+		section,
+		mediaSelector: '.yec-parallax-image__media',
+	})),
+	...Array.from(document.querySelectorAll('.yec-overlay-banner[data-parallax-enabled="1"]')).map((section) => ({
+		section,
+		mediaSelector: '.yec-overlay-banner__media',
+	})),
+];
 
-if (parallaxSections.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (parallaxItems.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
 	let ticking = false;
 
 	const updateParallax = () => {
-		parallaxSections.forEach((section) => {
-			const media = section.querySelector('.yec-parallax-image__media');
+		parallaxItems.forEach((item) => {
+			const section = item.section;
+			const media = section.querySelector(item.mediaSelector);
 			if (!media) {
 				return;
 			}

@@ -489,6 +489,119 @@ function yec_render_learning_options_section_block($attributes) {
   return ob_get_clean();
 }
 
+function yec_render_overlay_banner_section_block($attributes) {
+  $image_url = isset($attributes['imageUrl']) ? esc_url((string) $attributes['imageUrl']) : '';
+  $image_alt = isset($attributes['imageAlt']) ? sanitize_text_field((string) $attributes['imageAlt']) : '';
+  $parallax_enabled = !isset($attributes['parallaxEnabled']) || !empty($attributes['parallaxEnabled']);
+  $parallax_strength = isset($attributes['parallaxStrength']) ? (int) $attributes['parallaxStrength'] : 48;
+  $parallax_strength = max(0, min(120, $parallax_strength));
+  $overlay_color = isset($attributes['overlayColor']) ? sanitize_hex_color($attributes['overlayColor']) : '#000000';
+  if (!$overlay_color) {
+    $overlay_color = '#000000';
+  }
+  $overlay_opacity = isset($attributes['overlayOpacity']) ? (int) $attributes['overlayOpacity'] : 35;
+  $overlay_opacity = max(0, min(100, $overlay_opacity));
+  $title_primary = isset($attributes['titlePrimary']) ? sanitize_text_field((string) $attributes['titlePrimary']) : '';
+  $title_secondary = isset($attributes['titleSecondary']) ? sanitize_text_field((string) $attributes['titleSecondary']) : '';
+  $title_primary_size = isset($attributes['titlePrimarySize']) ? sanitize_key((string) $attributes['titlePrimarySize']) : 'large';
+  $title_primary_size = in_array($title_primary_size, ['large', 'medium', 'small'], true) ? $title_primary_size : 'large';
+  $title_secondary_size = isset($attributes['titleSecondarySize']) ? sanitize_key((string) $attributes['titleSecondarySize']) : 'small';
+  $title_secondary_size = in_array($title_secondary_size, ['large', 'medium', 'small'], true) ? $title_secondary_size : 'small';
+  $cta_text = isset($attributes['ctaText']) ? sanitize_text_field((string) $attributes['ctaText']) : '';
+  $cta_url = isset($attributes['ctaUrl']) ? esc_url((string) $attributes['ctaUrl']) : '';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
+  $section_style = '--yec-overlay-color:' . $overlay_color . ';--yec-overlay-opacity:' . ($overlay_opacity / 100) . ';' . $section_spacing_style;
+
+  ob_start();
+  ?>
+  <section class="yec-overlay-banner<?php echo $parallax_enabled ? ' is-parallax-enabled' : ''; ?> yec-overlay-banner--primary-<?php echo esc_attr($title_primary_size); ?> yec-overlay-banner--secondary-<?php echo esc_attr($title_secondary_size); ?>"<?php echo $section_style ? ' style="' . esc_attr($section_style) . '"' : ''; ?> data-parallax-enabled="<?php echo $parallax_enabled ? '1' : '0'; ?>" data-parallax-strength="<?php echo esc_attr((string) $parallax_strength); ?>" aria-label="Sekcja overlay banner">
+    <div class="yec-overlay-banner__media">
+      <?php if ($image_url) : ?>
+        <img class="yec-overlay-banner__image" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
+      <?php endif; ?>
+      <div class="yec-overlay-banner__overlay"></div>
+      <div class="yec-overlay-banner__content">
+        <?php if ($title_primary) : ?>
+          <h2 class="yec-overlay-banner__title-primary"><?php echo esc_html($title_primary); ?></h2>
+        <?php endif; ?>
+
+        <?php if ($title_secondary) : ?>
+          <p class="yec-overlay-banner__title-secondary"><?php echo esc_html($title_secondary); ?></p>
+        <?php endif; ?>
+
+        <?php if ($cta_text && $cta_url) : ?>
+          <a class="yec-cta__button" href="<?php echo esc_url($cta_url); ?>"><?php echo esc_html($cta_text); ?></a>
+        <?php endif; ?>
+      </div>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
+function yec_render_for_whom_section_block($attributes) {
+  $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
+
+  $cards = [
+    [
+      'image_url' => isset($attributes['card1ImageUrl']) ? esc_url((string) $attributes['card1ImageUrl']) : '',
+      'image_alt' => isset($attributes['card1ImageAlt']) ? sanitize_text_field((string) $attributes['card1ImageAlt']) : '',
+      'text' => isset($attributes['card1Text']) ? sanitize_text_field((string) $attributes['card1Text']) : '',
+      'url' => isset($attributes['card1Url']) ? esc_url((string) $attributes['card1Url']) : '',
+      'overlay_color' => isset($attributes['card1OverlayColor']) ? sanitize_hex_color((string) $attributes['card1OverlayColor']) : '#000000',
+      'overlay_opacity' => isset($attributes['card1OverlayOpacity']) ? (int) $attributes['card1OverlayOpacity'] : 35,
+    ],
+    [
+      'image_url' => isset($attributes['card2ImageUrl']) ? esc_url((string) $attributes['card2ImageUrl']) : '',
+      'image_alt' => isset($attributes['card2ImageAlt']) ? sanitize_text_field((string) $attributes['card2ImageAlt']) : '',
+      'text' => isset($attributes['card2Text']) ? sanitize_text_field((string) $attributes['card2Text']) : '',
+      'url' => isset($attributes['card2Url']) ? esc_url((string) $attributes['card2Url']) : '',
+      'overlay_color' => isset($attributes['card2OverlayColor']) ? sanitize_hex_color((string) $attributes['card2OverlayColor']) : '#000000',
+      'overlay_opacity' => isset($attributes['card2OverlayOpacity']) ? (int) $attributes['card2OverlayOpacity'] : 35,
+    ],
+  ];
+
+  foreach ($cards as $i => $card) {
+    if (!$card['overlay_color']) {
+      $cards[$i]['overlay_color'] = '#000000';
+    }
+    $cards[$i]['overlay_opacity'] = max(0, min(100, $card['overlay_opacity']));
+  }
+
+  ob_start();
+  ?>
+  <section class="yec-for-whom yec-for-whom--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Dla kogo">
+    <?php if ($section_title) : ?>
+      <h2 class="yec-for-whom__title"><?php echo esc_html($section_title); ?></h2>
+    <?php endif; ?>
+
+    <div class="yec-for-whom__grid">
+      <?php foreach ($cards as $card) : ?>
+        <a class="yec-for-whom__item" href="<?php echo esc_url($card['url'] ? $card['url'] : '#'); ?>">
+          <?php if ($card['image_url']) : ?>
+            <img class="yec-for-whom__image" src="<?php echo esc_url($card['image_url']); ?>" alt="<?php echo esc_attr($card['image_alt']); ?>">
+          <?php else : ?>
+            <div class="yec-for-whom__placeholder"></div>
+          <?php endif; ?>
+
+          <div class="yec-for-whom__overlay" style="background-color: <?php echo esc_attr($card['overlay_color']); ?>; opacity: <?php echo esc_attr((string) ($card['overlay_opacity'] / 100)); ?>;"></div>
+
+          <?php if ($card['text']) : ?>
+            <span class="yec-for-whom__item-text"><?php echo esc_html($card['text']); ?></span>
+          <?php endif; ?>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
 function yec_register_custom_blocks() {
   $editor_script_path = get_template_directory() . '/assets/js/hero-section-block.js';
   $image_text_script_path = get_template_directory() . '/assets/js/image-text-section-block.js';
@@ -497,6 +610,8 @@ function yec_register_custom_blocks() {
   $parallax_image_script_path = get_template_directory() . '/assets/js/parallax-image-block.js';
   $about_me_script_path = get_template_directory() . '/assets/js/about-me-section-block.js';
   $learning_options_script_path = get_template_directory() . '/assets/js/learning-options-section-block.js';
+  $overlay_banner_script_path = get_template_directory() . '/assets/js/overlay-banner-section-block.js';
+  $for_whom_script_path = get_template_directory() . '/assets/js/for-whom-section-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -523,6 +638,14 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($learning_options_script_path)) {
+    return;
+  }
+
+  if (!file_exists($overlay_banner_script_path)) {
+    return;
+  }
+
+  if (!file_exists($for_whom_script_path)) {
     return;
   }
 
@@ -579,6 +702,22 @@ function yec_register_custom_blocks() {
     get_template_directory_uri() . '/assets/js/learning-options-section-block.js',
     ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
     filemtime($learning_options_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-overlay-banner-section-block',
+    get_template_directory_uri() . '/assets/js/overlay-banner-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($overlay_banner_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-for-whom-section-block',
+    get_template_directory_uri() . '/assets/js/for-whom-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($for_whom_script_path),
     true
   );
 
@@ -982,6 +1121,145 @@ function yec_register_custom_blocks() {
       'card3ImageAlt' => [
         'type'    => 'string',
         'default' => '',
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/overlay-banner-section', [
+    'editor_script'   => 'yec-overlay-banner-section-block',
+    'render_callback' => 'yec_render_overlay_banner_section_block',
+    'attributes'      => [
+      'imageId' => [
+        'type' => 'number',
+      ],
+      'imageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'imageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'overlayColor' => [
+        'type'    => 'string',
+        'default' => '#000000',
+      ],
+      'overlayOpacity' => [
+        'type'    => 'number',
+        'default' => 35,
+      ],
+      'parallaxEnabled' => [
+        'type'    => 'boolean',
+        'default' => true,
+      ],
+      'parallaxStrength' => [
+        'type'    => 'number',
+        'default' => 48,
+      ],
+      'titlePrimary' => [
+        'type'    => 'string',
+        'default' => 'Ucz sie wygodnie online',
+      ],
+      'titlePrimarySize' => [
+        'type'    => 'string',
+        'default' => 'large',
+      ],
+      'titleSecondary' => [
+        'type'    => 'string',
+        'default' => 'Elastyczny plan dopasowany do Ciebie',
+      ],
+      'titleSecondarySize' => [
+        'type'    => 'string',
+        'default' => 'small',
+      ],
+      'ctaText' => [
+        'type'    => 'string',
+        'default' => 'Umow konsultacje',
+      ],
+      'ctaUrl' => [
+        'type'    => 'string',
+        'default' => '/kontakt',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/for-whom-section', [
+    'editor_script'   => 'yec-for-whom-section-block',
+    'render_callback' => 'yec_render_for_whom_section_block',
+    'attributes'      => [
+      'sectionTitle' => [
+        'type'    => 'string',
+        'default' => 'Dla kogo',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
+      'card1ImageId' => [
+        'type' => 'number',
+      ],
+      'card1ImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card1ImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card1Text' => [
+        'type'    => 'string',
+        'default' => 'Dla doroslych',
+      ],
+      'card1Url' => [
+        'type'    => 'string',
+        'default' => '/dla-doroslych',
+      ],
+      'card1OverlayColor' => [
+        'type'    => 'string',
+        'default' => '#000000',
+      ],
+      'card1OverlayOpacity' => [
+        'type'    => 'number',
+        'default' => 35,
+      ],
+      'card2ImageId' => [
+        'type' => 'number',
+      ],
+      'card2ImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card2ImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card2Text' => [
+        'type'    => 'string',
+        'default' => 'Dla mlodziezy',
+      ],
+      'card2Url' => [
+        'type'    => 'string',
+        'default' => '/dla-mlodziezy',
+      ],
+      'card2OverlayColor' => [
+        'type'    => 'string',
+        'default' => '#000000',
+      ],
+      'card2OverlayOpacity' => [
+        'type'    => 'number',
+        'default' => 35,
       ],
     ],
   ]);
