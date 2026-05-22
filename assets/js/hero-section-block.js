@@ -30,6 +30,10 @@
         type: 'string',
         default: 'Mow po angielsku pewnie i swobodnie',
       },
+      titleSize: {
+        type: 'string',
+        default: 'medium',
+      },
       subtitle: {
         type: 'string',
         default: 'Indywidualne lekcje online, ktore pomoga Ci w pracy, na egzaminie i w codziennej komunikacji.',
@@ -61,8 +65,9 @@
     edit: function (props) {
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
+      var titleSize = attributes.titleSize || 'medium';
       var blockProps = useBlockProps({
-        className: 'yec-editable-section yec-editable-section--' + (attributes.layout || 'text-first'),
+        className: 'yec-editable-section yec-editable-section--' + (attributes.layout || 'text-first') + ' yec-editable-section--title-' + titleSize,
       });
 
       var onSelectImage = function (media) {
@@ -102,6 +107,25 @@
               ],
               onChange: function (value) {
                 setAttributes({ layout: value });
+              },
+            })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              initialOpen: true,
+            },
+            createElement(SelectControl, {
+              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              value: titleSize,
+              options: [
+                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+              ],
+              onChange: function (value) {
+                setAttributes({ titleSize: value || 'medium' });
               },
             })
           ),

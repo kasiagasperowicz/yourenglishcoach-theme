@@ -9,6 +9,7 @@
   var Button = components.Button;
   var RangeControl = components.RangeControl;
   var TextControl = components.TextControl;
+  var SelectControl = components.SelectControl;
   var ToggleControl = components.ToggleControl;
   var ColorPalette = components.ColorPalette;
   var createElement = element.createElement;
@@ -38,6 +39,10 @@
       sectionTitle: {
         type: 'string',
         default: '',
+      },
+      titleSize: {
+        type: 'string',
+        default: 'medium',
       },
       hasBackground: {
         type: 'boolean',
@@ -69,12 +74,13 @@
       var setAttributes = props.setAttributes;
       var cards = Array.isArray(attributes.cards) ? attributes.cards.map(ensureCardShape) : [];
       var sectionTitle = attributes.sectionTitle || '';
+      var titleSize = attributes.titleSize || 'medium';
       var hasBackground = !!attributes.hasBackground;
       var backgroundColor = attributes.backgroundColor || '#F7EEF2';
       var backgroundImageId = attributes.backgroundImageId;
       var backgroundImageUrl = attributes.backgroundImageUrl || '';
       var blockProps = useBlockProps({
-        className: 'yec-google-reviews' + (hasBackground ? ' yec-google-reviews--with-bg' : ''),
+        className: 'yec-google-reviews yec-google-reviews--title-' + titleSize + (hasBackground ? ' yec-google-reviews--with-bg' : ''),
         style: hasBackground
           ? {
               '--yec-google-reviews-bg-color': backgroundColor,
@@ -118,6 +124,18 @@
               value: sectionTitle,
               onChange: function (value) {
                 setAttributes({ sectionTitle: value });
+              },
+            }),
+            createElement(SelectControl, {
+              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              value: titleSize,
+              options: [
+                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+              ],
+              onChange: function (value) {
+                setAttributes({ titleSize: value || 'medium' });
               },
             }),
             createElement(ToggleControl, {

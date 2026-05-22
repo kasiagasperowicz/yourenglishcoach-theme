@@ -9,6 +9,7 @@
   var Button = components.Button;
   var ToggleControl = components.ToggleControl;
   var ColorPalette = components.ColorPalette;
+  var SelectControl = components.SelectControl;
   var BaseControl = components.BaseControl;
   var createElement = element.createElement;
   var __ = i18n.__;
@@ -24,6 +25,7 @@
     attributes: {
       eyebrow: { type: 'string', default: 'Co zyskujesz' },
       title: { type: 'string', default: 'Dlaczego warto uczyc sie ze mna' },
+      titleSize: { type: 'string', default: 'medium' },
       subtitle: { type: 'string', default: 'Skupiamy sie na praktycznych efektach, ktore wykorzystasz od razu.' },
       hasBackground: { type: 'boolean', default: false },
       backgroundColor: { type: 'string', default: '#F7EEF2' },
@@ -51,7 +53,8 @@
     edit: function (props) {
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
-      var blockClassName = 'yec-benefits-section' + (attributes.hasBackground ? ' yec-benefits-section--with-bg' : '');
+      var titleSize = attributes.titleSize || 'medium';
+      var blockClassName = 'yec-benefits-section yec-benefits-section--title-' + titleSize + (attributes.hasBackground ? ' yec-benefits-section--with-bg' : '');
       var blockProps = useBlockProps({
         className: blockClassName,
         style: attributes.hasBackground && attributes.backgroundColor ? { '--yec-benefits-bg': attributes.backgroundColor } : undefined,
@@ -95,6 +98,25 @@
                   })
                 )
               : null
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              initialOpen: true,
+            },
+            createElement(SelectControl, {
+              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              value: titleSize,
+              options: [
+                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+              ],
+              onChange: function (value) {
+                setAttributes({ titleSize: value || 'medium' });
+              },
+            })
           ),
           cards.map(function (card, index) {
             return createElement(

@@ -221,6 +221,18 @@ body {
   font-size: clamp(30px, 4vw, 46px);
   line-height: 1.1;
 }
+
+.yec-editable-section--title-large .yec-editable-section__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-editable-section--title-medium .yec-editable-section__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-editable-section--title-small .yec-editable-section__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
 .yec-editable-section__subtitle {
   font-family: 'Lato', sans-serif;
   padding-bottom: 24px;
@@ -241,7 +253,7 @@ body {
 .yec-editable-section__media {
   max-width: 1120px;
   margin: 0 auto;
-  min-height: 320px;
+ 
   background: #e3e3e3;
   border-top-right-radius: 100px;
   border-bottom-left-radius: 100px;
@@ -326,6 +338,18 @@ body {
   line-height: 1.1;
 }
 
+.yec-image-text-section--title-large .yec-image-text-section__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-image-text-section--title-medium .yec-image-text-section__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-image-text-section--title-small .yec-image-text-section__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
+
 .yec-image-text-section__text {
   margin: 0;
   font-size: 16px;
@@ -390,6 +414,18 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(30px, 4vw, 46px);
   line-height: 1.1;
+}
+
+.yec-benefits-section--title-large .yec-benefits-section__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-benefits-section--title-medium .yec-benefits-section__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-benefits-section--title-small .yec-benefits-section__title {
+  font-size: clamp(24px, 3.2vw, 34px);
 }
 
 .yec-benefits-section__subtitle {
@@ -482,6 +518,18 @@ body {
   font-size: clamp(30px, 4vw, 46px);
   line-height: 1.1;
   padding-bottom: 20px;
+}
+
+.yec-google-reviews--title-large .yec-google-reviews__section-title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-google-reviews--title-medium .yec-google-reviews__section-title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-google-reviews--title-small .yec-google-reviews__section-title {
+  font-size: clamp(24px, 3.2vw, 34px);
 }
 
 .yec-google-reviews__viewport {
@@ -698,6 +746,8 @@ body {
 .yec-about-me-section__right {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 18px;
 }
 
@@ -713,6 +763,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-size: clamp(30px, 4vw, 46px);
   line-height: 1.1;
+  max-width: 80%;
 }
 
 .yec-about-me-section--title-large .yec-about-me-section__title {
@@ -735,7 +786,7 @@ body {
 }
 
 .yec-about-me-section__right .yec-cta__button {
-  margin-top: auto;
+  margin-top: 24px;
   width: fit-content;
 }
 
@@ -749,5 +800,117 @@ body {
   .yec-about-me-section__left,
   .yec-about-me-section__right {
     min-height: 0;
+  }
+}
+
+// ─── Learning Options Section ───────────────────────────────────────────
+
+.yec-learning-section {
+  max-width: 1120px;
+  margin: 64px auto;
+  padding: 0 20px;
+}
+
+.yec-learning-section__title {
+  margin: 0 0 28px;
+  text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.1;
+}
+
+.yec-learning-section--title-large .yec-learning-section__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-learning-section--title-medium .yec-learning-section__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-learning-section--title-small .yec-learning-section__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
+
+.yec-learning-section__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.yec-learning-section__card {
+  border: 1px solid #ece9ec;
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #fff;
+}
+
+.yec-learning-section__card-title {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.yec-learning-section__card-text {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.yec-learning-section__media {
+  width: 100%;
+  aspect-ratio: 1.2;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #efefef;
+}
+
+.yec-learning-section__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.yec-learning-section__placeholder {
+  width: 100%;
+  min-height: 160px;
+  border-radius: 14px;
+  background: #f4f4f4;
+  color: #666;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  text-align: center;
+  padding: 12px;
+}
+
+@media (max-width: 980px) {
+  .yec-learning-section__grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  .yec-learning-section__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .yec-learning-section__card {
+    scroll-snap-align: start;
+  }
+
+  .yec-learning-section {
+    margin: 48px auto;
   }
 }

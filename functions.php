@@ -74,6 +74,8 @@ add_filter('upload_mimes', 'yec_allow_svg_upload');
 function yec_render_hero_section_block($attributes) {
   $eyebrow  = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title    = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
   $subtitle = isset($attributes['subtitle']) ? wp_kses_post($attributes['subtitle']) : '';
   $cta_text = isset($attributes['ctaText']) ? sanitize_text_field($attributes['ctaText']) : '';
   $cta_url  = isset($attributes['ctaUrl']) ? esc_url($attributes['ctaUrl']) : '';
@@ -84,7 +86,7 @@ function yec_render_hero_section_block($attributes) {
 
   ob_start();
   ?>
-  <section class="yec-editable-section yec-editable-section--<?php echo esc_attr($layout); ?>" aria-label="Sekcja hero">
+  <section class="yec-editable-section yec-editable-section--<?php echo esc_attr($layout); ?> yec-editable-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Sekcja hero">
     <div class="yec-editable-section__content">
       <?php if ($eyebrow) : ?>
         <p class="yec-editable-section__eyebrow"><?php echo esc_html($eyebrow); ?></p>
@@ -117,6 +119,8 @@ function yec_render_hero_section_block($attributes) {
 function yec_render_image_text_section_block($attributes) {
   $eyebrow    = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title      = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
   $content    = isset($attributes['contentText']) ? wp_kses_post($attributes['contentText']) : '';
   $cta_text   = isset($attributes['ctaText']) ? sanitize_text_field($attributes['ctaText']) : '';
   $cta_url    = isset($attributes['ctaUrl']) ? esc_url($attributes['ctaUrl']) : '';
@@ -127,7 +131,7 @@ function yec_render_image_text_section_block($attributes) {
 
   ob_start();
   ?>
-  <section class="yec-image-text-section yec-image-text-section--<?php echo esc_attr($layout); ?>" aria-label="Sekcja obraz i tekst">
+  <section class="yec-image-text-section yec-image-text-section--<?php echo esc_attr($layout); ?> yec-image-text-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Sekcja obraz i tekst">
     <?php if ($image_url) : ?>
       <div class="yec-image-text-section__media">
         <img class="yec-image-text-section__image" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
@@ -160,10 +164,12 @@ function yec_render_image_text_section_block($attributes) {
 function yec_render_benefits_section_block($attributes) {
   $eyebrow  = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title    = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
   $subtitle = isset($attributes['subtitle']) ? wp_kses_post($attributes['subtitle']) : '';
   $has_background = !empty($attributes['hasBackground']);
   $background_color = isset($attributes['backgroundColor']) ? sanitize_hex_color($attributes['backgroundColor']) : '';
-  $section_class = 'yec-benefits-section' . ($has_background ? ' yec-benefits-section--with-bg' : '');
+  $section_class = 'yec-benefits-section yec-benefits-section--title-' . $title_size . ($has_background ? ' yec-benefits-section--with-bg' : '');
   $section_style = '';
 
   if ($has_background && $background_color) {
@@ -242,10 +248,12 @@ function yec_render_benefits_section_block($attributes) {
 function yec_render_google_reviews_block($attributes) {
   $google_reviews_url = 'https://www.google.com/search?sca_esv=78843e6f5da49b15&hl=pl-PL&sxsrf=ANbL-n4lRVg8a2Xuepq-7_LrQCoUlgoZhw:1779277099623&q=monika+ra%C5%BAniewska+-+your+english+coach+pozna%C5%84+opinie&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOT3MlEa_UxfvZNqakWrtPKV9WiC7rZ1BvPHw2VXhsgHsHIlVBelYZKx_DIUBceaSS9Qie64%3D&uds=ALYpb_msCbf7eOd7scXyYS6_3dkBohr0WYMWeEBCRCBE_88Ir_8L3k54yrEZSe370VSNb7o7w8J9wMw_9YpB55Lg1-K2t45bPeJYdZzUUVE5bEQ2eLvftOz6QxB44CUUiyz12P-3hyp0iI8r0PaRyHEjpnRToigJBQ&sa=X&ved=2ahUKEwiXpuvb48eUAxUdORAIHTQeODAQ3PALegQIOxAF&biw=1710&bih=995&dpr=1';
   $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
   $has_background = !empty($attributes['hasBackground']);
   $background_color = isset($attributes['backgroundColor']) ? sanitize_hex_color($attributes['backgroundColor']) : '';
   $background_image_url = isset($attributes['backgroundImageUrl']) ? esc_url_raw((string) $attributes['backgroundImageUrl']) : '';
-  $section_class = 'yec-google-reviews' . ($has_background ? ' yec-google-reviews--with-bg' : '');
+  $section_class = 'yec-google-reviews yec-google-reviews--title-' . $title_size . ($has_background ? ' yec-google-reviews--with-bg' : '');
   $section_style = '';
   $style_parts = [];
 
@@ -391,6 +399,67 @@ function yec_render_about_me_section_block($attributes) {
   return ob_get_clean();
 }
 
+function yec_render_learning_options_section_block($attributes) {
+  $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+
+  $cards = [
+    [
+      'title' => isset($attributes['card1Title']) ? sanitize_text_field((string) $attributes['card1Title']) : '',
+      'text' => isset($attributes['card1Text']) ? wp_kses_post((string) $attributes['card1Text']) : '',
+      'image_url' => isset($attributes['card1ImageUrl']) ? esc_url((string) $attributes['card1ImageUrl']) : '',
+      'image_alt' => isset($attributes['card1ImageAlt']) ? sanitize_text_field((string) $attributes['card1ImageAlt']) : '',
+    ],
+    [
+      'title' => isset($attributes['card2Title']) ? sanitize_text_field((string) $attributes['card2Title']) : '',
+      'text' => isset($attributes['card2Text']) ? wp_kses_post((string) $attributes['card2Text']) : '',
+      'image_url' => isset($attributes['card2ImageUrl']) ? esc_url((string) $attributes['card2ImageUrl']) : '',
+      'image_alt' => isset($attributes['card2ImageAlt']) ? sanitize_text_field((string) $attributes['card2ImageAlt']) : '',
+    ],
+    [
+      'title' => isset($attributes['card3Title']) ? sanitize_text_field((string) $attributes['card3Title']) : '',
+      'text' => isset($attributes['card3Text']) ? wp_kses_post((string) $attributes['card3Text']) : '',
+      'image_url' => isset($attributes['card3ImageUrl']) ? esc_url((string) $attributes['card3ImageUrl']) : '',
+      'image_alt' => isset($attributes['card3ImageAlt']) ? sanitize_text_field((string) $attributes['card3ImageAlt']) : '',
+    ],
+  ];
+
+  ob_start();
+  ?>
+  <section class="yec-learning-section yec-learning-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Jak mozesz uczyc sie ze mna">
+    <?php if ($section_title) : ?>
+      <h2 class="yec-learning-section__title"><?php echo esc_html($section_title); ?></h2>
+    <?php endif; ?>
+
+    <div class="yec-learning-section__grid">
+      <?php foreach ($cards as $card) : ?>
+        <?php if (!$card['title'] && !$card['text'] && !$card['image_url']) {
+          continue;
+        } ?>
+        <article class="yec-learning-section__card">
+          <?php if ($card['title']) : ?>
+            <h3 class="yec-learning-section__card-title"><?php echo esc_html($card['title']); ?></h3>
+          <?php endif; ?>
+
+          <?php if ($card['text']) : ?>
+            <p class="yec-learning-section__card-text"><?php echo wp_kses_post($card['text']); ?></p>
+          <?php endif; ?>
+
+          <?php if ($card['image_url']) : ?>
+            <div class="yec-learning-section__media">
+              <img class="yec-learning-section__image" src="<?php echo esc_url($card['image_url']); ?>" alt="<?php echo esc_attr($card['image_alt']); ?>">
+            </div>
+          <?php endif; ?>
+        </article>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
 function yec_register_custom_blocks() {
   $editor_script_path = get_template_directory() . '/assets/js/hero-section-block.js';
   $image_text_script_path = get_template_directory() . '/assets/js/image-text-section-block.js';
@@ -398,6 +467,7 @@ function yec_register_custom_blocks() {
   $google_reviews_script_path = get_template_directory() . '/assets/js/google-reviews-block.js';
   $parallax_image_script_path = get_template_directory() . '/assets/js/parallax-image-block.js';
   $about_me_script_path = get_template_directory() . '/assets/js/about-me-section-block.js';
+  $learning_options_script_path = get_template_directory() . '/assets/js/learning-options-section-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -420,6 +490,10 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($about_me_script_path)) {
+    return;
+  }
+
+  if (!file_exists($learning_options_script_path)) {
     return;
   }
 
@@ -471,6 +545,14 @@ function yec_register_custom_blocks() {
     true
   );
 
+  wp_register_script(
+    'yec-learning-options-section-block',
+    get_template_directory_uri() . '/assets/js/learning-options-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($learning_options_script_path),
+    true
+  );
+
   register_block_type('yec/hero-section', [
     'editor_script'   => 'yec-hero-section-block',
     'render_callback' => 'yec_render_hero_section_block',
@@ -482,6 +564,10 @@ function yec_register_custom_blocks() {
       'title' => [
         'type'    => 'string',
         'default' => 'Mow po angielsku pewnie i swobodnie',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
       ],
       'subtitle' => [
         'type'    => 'string',
@@ -525,6 +611,10 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => 'Angielski dopasowany do Twoich celow',
       ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
       'contentText' => [
         'type'    => 'string',
         'default' => 'Pomagam doroslym i mlodziezy rozwijac swobode mowienia, slownictwo i pewnosc siebie.',
@@ -566,6 +656,10 @@ function yec_register_custom_blocks() {
       'title' => [
         'type'    => 'string',
         'default' => 'Dlaczego warto uczyc sie ze mna',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
       ],
       'subtitle' => [
         'type'    => 'string',
@@ -666,6 +760,10 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => '',
       ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
       'hasBackground' => [
         'type'    => 'boolean',
         'default' => false,
@@ -741,6 +839,78 @@ function yec_register_custom_blocks() {
       'ctaUrl' => [
         'type'    => 'string',
         'default' => '/kontakt',
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/learning-options-section', [
+    'editor_script'   => 'yec-learning-options-section-block',
+    'render_callback' => 'yec_render_learning_options_section_block',
+    'attributes'      => [
+      'sectionTitle' => [
+        'type'    => 'string',
+        'default' => 'Jak mozesz uczyc sie ze mna',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
+      'card1Title' => [
+        'type'    => 'string',
+        'default' => 'Lekcje indywidualne',
+      ],
+      'card1Text' => [
+        'type'    => 'string',
+        'default' => 'Spotkania 1:1 dopasowane do Twoich celow i tempa pracy.',
+      ],
+      'card1ImageId' => [
+        'type' => 'number',
+      ],
+      'card1ImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card1ImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card2Title' => [
+        'type'    => 'string',
+        'default' => 'Konwersacje tematyczne',
+      ],
+      'card2Text' => [
+        'type'    => 'string',
+        'default' => 'Praktyczne rozmowy, ktore pomagaja swobodnie mowic po angielsku.',
+      ],
+      'card2ImageId' => [
+        'type' => 'number',
+      ],
+      'card2ImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card2ImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card3Title' => [
+        'type'    => 'string',
+        'default' => 'Wsparcie do egzaminow',
+      ],
+      'card3Text' => [
+        'type'    => 'string',
+        'default' => 'Materialy i plan nauki skoncentrowane na Twoim wyniku.',
+      ],
+      'card3ImageId' => [
+        'type' => 'number',
+      ],
+      'card3ImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'card3ImageAlt' => [
+        'type'    => 'string',
+        'default' => '',
       ],
     ],
   ]);

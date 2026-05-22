@@ -30,6 +30,10 @@
         type: 'string',
         default: 'Angielski dopasowany do Twoich celow',
       },
+      titleSize: {
+        type: 'string',
+        default: 'medium',
+      },
       contentText: {
         type: 'string',
         default: 'Pomagam doroslym i mlodziezy rozwijac swobode mowienia, slownictwo i pewnosc siebie.',
@@ -61,8 +65,9 @@
     edit: function (props) {
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
+      var titleSize = attributes.titleSize || 'medium';
       var blockProps = useBlockProps({
-        className: 'yec-image-text-section yec-image-text-section--' + (attributes.layout || 'image-left'),
+        className: 'yec-image-text-section yec-image-text-section--' + (attributes.layout || 'image-left') + ' yec-image-text-section--title-' + titleSize,
       });
 
       var onSelectImage = function (media) {
@@ -102,6 +107,25 @@
               ],
               onChange: function (value) {
                 setAttributes({ layout: value });
+              },
+            })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              initialOpen: true,
+            },
+            createElement(SelectControl, {
+              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              value: titleSize,
+              options: [
+                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+              ],
+              onChange: function (value) {
+                setAttributes({ titleSize: value || 'medium' });
               },
             })
           ),
