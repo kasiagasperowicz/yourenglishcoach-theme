@@ -49,10 +49,11 @@ const reviewSections = document.querySelectorAll('.yec-google-reviews');
 
 reviewSections.forEach((section) => {
 	const track = section.querySelector('.yec-google-reviews__track');
+	const viewport = section.querySelector('.yec-google-reviews__viewport');
 	const prevBtn = section.querySelector('.yec-google-reviews__btn--prev');
 	const nextBtn = section.querySelector('.yec-google-reviews__btn--next');
 
-	if (!track || !prevBtn || !nextBtn) {
+	if (!track || !viewport || !prevBtn || !nextBtn) {
 		return;
 	}
 
@@ -64,11 +65,16 @@ reviewSections.forEach((section) => {
 	let index = 0;
 	let cloneCount = 0;
 	let resizeTimer;
+	let activePointerId = null;
+	let dragStartX = 0;
+	let dragDeltaX = 0;
+	let isDragging = false;
+	let suppressClick = false;
 
 	const getVisibleCount = () => {
 		if (window.innerWidth <= 760) return 1;
 		if (window.innerWidth <= 1100) return 2;
-		return 4;
+		return 3;
 	};
 
 	const getGap = () => {
@@ -88,6 +94,62 @@ reviewSections.forEach((section) => {
 	const moveTrack = (useTransition = true) => {
 		track.style.transition = useTransition ? 'transform 0.35s ease' : 'none';
 		track.style.transform = `translateX(-${index * getStep()}px)`;
+	};
+
+	const startDrag = (pointerId, clientX) => {
+		activePointerId = pointerId;
+		dragStartX = clientX;
+		dragDeltaX = 0;
+		isDragging = false;
+		suppressClick = false;
+		viewport.classList.add('is-dragging');
+		track.style.transition = 'none';
+	};
+
+	const moveDrag = (clientX) => {
+		if (activePointerId === null) {
+			return;
+		}
+
+		dragDeltaX = clientX - dragStartX;
+
+		if (Math.abs(dragDeltaX) > 6) {
+			isDragging = true;
+		}
+
+		const baseOffset = -(index * getStep());
+		track.style.transform = `translateX(${baseOffset + dragDeltaX}px)`;
+	};
+
+	const endDrag = () => {
+		if (activePointerId === null) {
+			return;
+		}
+
+		const step = getStep();
+		if (!step) {
+			activePointerId = null;
+			dragDeltaX = 0;
+			viewport.classList.remove('is-dragging');
+			moveTrack(true);
+			return;
+		}
+		const threshold = Math.min(120, step * 0.2);
+
+		if (Math.abs(dragDeltaX) > threshold) {
+			const stepShift = Math.max(1, Math.round(Math.abs(dragDeltaX) / step));
+			if (dragDeltaX < 0) {
+				index += stepShift;
+			} else {
+				index -= stepShift;
+			}
+			suppressClick = true;
+		}
+
+		activePointerId = null;
+		dragDeltaX = 0;
+		viewport.classList.remove('is-dragging');
+		moveTrack(true);
 	};
 
 	const rebuildLoop = () => {
@@ -164,6 +226,49 @@ reviewSections.forEach((section) => {
 		normalizeLoopPosition();
 	});
 
+	viewport.addEventListener('pointerdown', (event) => {
+		if (event.pointerType === 'mouse' && event.button !== 0) {
+			return;
+		}
+
+		viewport.setPointerCapture(event.pointerId);
+		startDrag(event.pointerId, event.clientX);
+	});
+
+	viewport.addEventListener('pointermove', (event) => {
+		if (event.pointerId !== activePointerId) {
+			return;
+		}
+
+		moveDrag(event.clientX);
+	});
+
+	viewport.addEventListener('pointerup', (event) => {
+		if (event.pointerId !== activePointerId) {
+			return;
+		}
+
+		endDrag();
+	});
+
+	viewport.addEventListener('pointercancel', (event) => {
+		if (event.pointerId !== activePointerId) {
+			return;
+		}
+
+		endDrag();
+	});
+
+	track.addEventListener('click', (event) => {
+		if (!suppressClick) {
+			return;
+		}
+
+		event.preventDefault();
+		event.stopPropagation();
+		suppressClick = false;
+	}, true);
+
 	window.addEventListener('resize', () => {
 		window.clearTimeout(resizeTimer);
 		resizeTimer = window.setTimeout(() => {
@@ -173,3 +278,48 @@ reviewSections.forEach((section) => {
 
 	rebuildLoop();
 });
+
+const parallaxSections = document.querySelectorAll('.yec-parallax-image[data-parallax-enabled="1"]');
+
+if (parallaxSections.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+	let ticking = false;
+
+	const updateParallax = () => {
+		parallaxSections.forEach((section) => {
+			const media = section.querySelector('.yec-parallax-image__media');
+			if (!media) {
+				return;
+			}
+
+			const rect = media.getBoundingClientRect();
+			const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+			const strength = parseFloat(section.getAttribute('data-parallax-strength') || '48') || 48;
+
+			if (rect.bottom < 0 || rect.top > viewportHeight) {
+				return;
+			}
+
+			const centerDelta = rect.top + rect.height / 2 - viewportHeight / 2;
+			const distanceRatio = centerDelta / viewportHeight;
+			const offset = Math.max(-strength, Math.min(strength, -distanceRatio * strength * 1.6));
+
+			media.style.setProperty('--yec-parallax-offset', `${offset.toFixed(2)}px`);
+		});
+
+		ticking = false;
+	};
+
+	const requestTick = () => {
+		if (ticking) {
+			return;
+		}
+
+		ticking = true;
+		window.requestAnimationFrame(updateParallax);
+	};
+
+	window.addEventListener('scroll', requestTick, { passive: true });
+	window.addEventListener('resize', requestTick);
+	window.addEventListener('load', requestTick);
+	requestTick();
+}

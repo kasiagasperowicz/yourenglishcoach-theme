@@ -282,47 +282,109 @@ function yec_render_google_reviews_block($attributes) {
     <?php if ($section_title) : ?>
       <h2 class="yec-google-reviews__section-title"><?php echo esc_html($section_title); ?></h2>
     <?php endif; ?>
-    <div class="yec-google-reviews__viewport">
-      <div class="yec-google-reviews__track" data-cards="<?php echo esc_attr((string) count($cards)); ?>">
-        <?php foreach ($cards as $card) : ?>
-          <?php
-          $photo_url = isset($card['photoUrl']) ? esc_url((string) $card['photoUrl']) : '';
-          $photo_alt = isset($card['photoAlt']) ? sanitize_text_field((string) $card['photoAlt']) : '';
-          $stars_raw = isset($card['stars']) ? (int) $card['stars'] : 5;
-          $stars = max(1, min(5, $stars_raw));
-          $text = isset($card['text']) ? wp_kses_post((string) $card['text']) : '';
-          $author = isset($card['author']) ? sanitize_text_field((string) $card['author']) : '';
-          $card_review_url = isset($card['reviewUrl']) ? esc_url((string) $card['reviewUrl']) : '';
-          $card_link = $card_review_url ? $card_review_url : $google_reviews_url;
-          ?>
-          <a class="yec-google-reviews__card" href="<?php echo esc_url($card_link); ?>" target="_blank" rel="noopener noreferrer">
-            <div class="yec-google-reviews__meta">
-              <span class="yec-google-reviews__avatar">
-                <?php if ($photo_url) : ?>
-                  <img src="<?php echo esc_url($photo_url); ?>" alt="<?php echo esc_attr($photo_alt); ?>">
-                <?php endif; ?>
-              </span>
-              <span class="yec-google-reviews__stars" aria-label="<?php echo esc_attr($stars); ?> na 5 gwiazdek">
-                <?php for ($i = 1; $i <= 5; $i++) : ?>
-                  <span class="yec-google-reviews__star<?php echo $i <= $stars ? ' is-filled' : ''; ?>">★</span>
-                <?php endfor; ?>
-              </span>
-            </div>
-            <p class="yec-google-reviews__text"><?php echo wp_kses_post($text); ?></p>
-            <?php if ($author) : ?>
-              <p class="yec-google-reviews__author"><?php echo esc_html($author); ?></p>
-            <?php endif; ?>
-          </a>
-        <?php endforeach; ?>
+    <div class="yec-google-reviews__viewport-wrap">
+      <div class="yec-google-reviews__viewport">
+        <div class="yec-google-reviews__track" data-cards="<?php echo esc_attr((string) count($cards)); ?>">
+          <?php foreach ($cards as $card) : ?>
+            <?php
+            $photo_url = isset($card['photoUrl']) ? esc_url((string) $card['photoUrl']) : '';
+            $photo_alt = isset($card['photoAlt']) ? sanitize_text_field((string) $card['photoAlt']) : '';
+            $stars_raw = isset($card['stars']) ? (int) $card['stars'] : 5;
+            $stars = max(1, min(5, $stars_raw));
+            $text = isset($card['text']) ? wp_kses_post((string) $card['text']) : '';
+            $author = isset($card['author']) ? sanitize_text_field((string) $card['author']) : '';
+            $card_review_url = isset($card['reviewUrl']) ? esc_url((string) $card['reviewUrl']) : '';
+            $card_link = $card_review_url ? $card_review_url : $google_reviews_url;
+            ?>
+            <a class="yec-google-reviews__card" href="<?php echo esc_url($card_link); ?>" target="_blank" rel="noopener noreferrer">
+              <div class="yec-google-reviews__meta">
+                <span class="yec-google-reviews__avatar">
+                  <?php if ($photo_url) : ?>
+                    <img src="<?php echo esc_url($photo_url); ?>" alt="<?php echo esc_attr($photo_alt); ?>">
+                  <?php endif; ?>
+                </span>
+                <span class="yec-google-reviews__stars" aria-label="<?php echo esc_attr($stars); ?> na 5 gwiazdek">
+                  <?php for ($i = 1; $i <= 5; $i++) : ?>
+                    <span class="yec-google-reviews__star<?php echo $i <= $stars ? ' is-filled' : ''; ?>">★</span>
+                  <?php endfor; ?>
+                </span>
+              </div>
+              <p class="yec-google-reviews__text"><?php echo wp_kses_post($text); ?></p>
+              <?php if ($author) : ?>
+                <p class="yec-google-reviews__author"><?php echo esc_html($author); ?></p>
+              <?php endif; ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
       </div>
+
+      <?php if (count($cards) > 3) : ?>
+        <div class="yec-google-reviews__controls" aria-hidden="true">
+          <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--prev" data-direction="prev">‹</button>
+          <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--next" data-direction="next">›</button>
+        </div>
+      <?php endif; ?>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
+function yec_render_parallax_image_block($attributes) {
+  $image_url = isset($attributes['imageUrl']) ? esc_url((string) $attributes['imageUrl']) : '';
+  $image_alt = isset($attributes['imageAlt']) ? sanitize_text_field((string) $attributes['imageAlt']) : '';
+  $parallax_enabled = !isset($attributes['parallaxEnabled']) || !empty($attributes['parallaxEnabled']);
+  $parallax_strength = isset($attributes['parallaxStrength']) ? (int) $attributes['parallaxStrength'] : 48;
+  $parallax_strength = max(0, min(120, $parallax_strength));
+
+  if (!$image_url) {
+    return '';
+  }
+
+  ob_start();
+  ?>
+  <section class="yec-parallax-image<?php echo $parallax_enabled ? ' is-parallax-enabled' : ''; ?>" data-parallax-enabled="<?php echo $parallax_enabled ? '1' : '0'; ?>" data-parallax-strength="<?php echo esc_attr((string) $parallax_strength); ?>" aria-label="Sekcja obraz parallax">
+    <div class="yec-parallax-image__media">
+      <img class="yec-parallax-image__img" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
+function yec_render_about_me_section_block($attributes) {
+  $eyebrow = isset($attributes['eyebrow']) ? sanitize_text_field((string) $attributes['eyebrow']) : '';
+  $title = isset($attributes['title']) ? sanitize_text_field((string) $attributes['title']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+  $content = isset($attributes['contentText']) ? wp_kses_post((string) $attributes['contentText']) : '';
+  $cta_text = isset($attributes['ctaText']) ? sanitize_text_field((string) $attributes['ctaText']) : '';
+  $cta_url = isset($attributes['ctaUrl']) ? esc_url((string) $attributes['ctaUrl']) : '';
+
+  ob_start();
+  ?>
+  <section class="yec-about-me-section yec-about-me-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Poznaj mnie blizej">
+    <div class="yec-about-me-section__left">
+      <?php if ($eyebrow) : ?>
+        <p class="yec-about-me-section__eyebrow"><?php echo esc_html($eyebrow); ?></p>
+      <?php endif; ?>
+
+      <?php if ($title) : ?>
+        <h2 class="yec-about-me-section__title"><?php echo esc_html($title); ?></h2>
+      <?php endif; ?>
     </div>
 
-    <?php if (count($cards) > 4) : ?>
-      <div class="yec-google-reviews__controls" aria-hidden="true">
-        <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--prev" data-direction="prev">‹</button>
-        <button type="button" class="yec-google-reviews__btn yec-google-reviews__btn--next" data-direction="next">›</button>
-      </div>
-    <?php endif; ?>
+    <div class="yec-about-me-section__right">
+      <?php if ($content) : ?>
+        <p class="yec-about-me-section__text"><?php echo wp_kses_post($content); ?></p>
+      <?php endif; ?>
+
+      <?php if ($cta_text && $cta_url) : ?>
+        <a class="yec-cta__button" href="<?php echo esc_url($cta_url); ?>"><?php echo esc_html($cta_text); ?></a>
+      <?php endif; ?>
+    </div>
   </section>
   <?php
 
@@ -334,6 +396,8 @@ function yec_register_custom_blocks() {
   $image_text_script_path = get_template_directory() . '/assets/js/image-text-section-block.js';
   $benefits_script_path = get_template_directory() . '/assets/js/benefits-section-block.js';
   $google_reviews_script_path = get_template_directory() . '/assets/js/google-reviews-block.js';
+  $parallax_image_script_path = get_template_directory() . '/assets/js/parallax-image-block.js';
+  $about_me_script_path = get_template_directory() . '/assets/js/about-me-section-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -348,6 +412,14 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($google_reviews_script_path)) {
+    return;
+  }
+
+  if (!file_exists($parallax_image_script_path)) {
+    return;
+  }
+
+  if (!file_exists($about_me_script_path)) {
     return;
   }
 
@@ -380,6 +452,22 @@ function yec_register_custom_blocks() {
     get_template_directory_uri() . '/assets/js/google-reviews-block.js',
     ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
     filemtime($google_reviews_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-parallax-image-block',
+    get_template_directory_uri() . '/assets/js/parallax-image-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($parallax_image_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-about-me-section-block',
+    get_template_directory_uri() . '/assets/js/about-me-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($about_me_script_path),
     true
   );
 
@@ -596,6 +684,63 @@ function yec_register_custom_blocks() {
       'cards' => [
         'type'    => 'array',
         'default' => [],
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/parallax-image', [
+    'editor_script'   => 'yec-parallax-image-block',
+    'render_callback' => 'yec_render_parallax_image_block',
+    'attributes'      => [
+      'imageId' => [
+        'type' => 'number',
+      ],
+      'imageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'imageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'parallaxEnabled' => [
+        'type'    => 'boolean',
+        'default' => true,
+      ],
+      'parallaxStrength' => [
+        'type'    => 'number',
+        'default' => 48,
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/about-me-section', [
+    'editor_script'   => 'yec-about-me-section-block',
+    'render_callback' => 'yec_render_about_me_section_block',
+    'attributes'      => [
+      'eyebrow' => [
+        'type'    => 'string',
+        'default' => 'Poznaj mnie blizej',
+      ],
+      'title' => [
+        'type'    => 'string',
+        'default' => 'Pomagam mowic po angielsku pewnie i naturalnie',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
+      'contentText' => [
+        'type'    => 'string',
+        'default' => 'Tworze lekcje dopasowane do Twoich celow, tempa i stylu pracy. Skupiamy sie na praktyce, swobodzie mowienia i realnych efektach.',
+      ],
+      'ctaText' => [
+        'type'    => 'string',
+        'default' => 'Umow konsultacje',
+      ],
+      'ctaUrl' => [
+        'type'    => 'string',
+        'default' => '/kontakt',
       ],
     ],
   ]);
