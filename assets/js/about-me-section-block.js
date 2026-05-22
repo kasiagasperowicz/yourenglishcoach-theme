@@ -6,6 +6,7 @@
   var PanelBody = components.PanelBody;
   var TextControl = components.TextControl;
   var SelectControl = components.SelectControl;
+  var RangeControl = components.RangeControl;
   var BaseControl = components.BaseControl;
   var createElement = element.createElement;
   var __ = i18n.__;
@@ -31,6 +32,12 @@
         type: 'string',
         default: 'medium',
       },
+      sectionSpaceTop: {
+        type: 'number',
+      },
+      sectionSpaceBottom: {
+        type: 'number',
+      },
       contentText: {
         type: 'string',
         default: 'Tworze lekcje dopasowane do Twoich celow, tempa i stylu pracy. Skupiamy sie na praktyce, swobodzie mowienia i realnych efektach.',
@@ -48,8 +55,18 @@
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
       var titleSize = attributes.titleSize || 'medium';
+      var sectionSpaceTop = Number.isFinite(attributes.sectionSpaceTop) ? attributes.sectionSpaceTop : 0;
+      var sectionSpaceBottom = Number.isFinite(attributes.sectionSpaceBottom) ? attributes.sectionSpaceBottom : 0;
+      var sectionSpacingStyle = {};
+      if (Number.isFinite(attributes.sectionSpaceTop)) {
+        sectionSpacingStyle.marginTop = sectionSpaceTop + 'px';
+      }
+      if (Number.isFinite(attributes.sectionSpaceBottom)) {
+        sectionSpacingStyle.marginBottom = sectionSpaceBottom + 'px';
+      }
       var blockProps = useBlockProps({
         className: 'yec-about-me-section yec-about-me-section--title-' + titleSize,
+        style: Object.keys(sectionSpacingStyle).length ? sectionSpacingStyle : undefined,
       });
 
       return createElement(
@@ -74,6 +91,31 @@
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
+              },
+            })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(RangeControl, {
+              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceTop,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceTop: value || 0 });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceBottom,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceBottom: value || 0 });
               },
             })
           ),

@@ -71,6 +71,26 @@ function yec_allow_svg_upload($mimes) {
 
 add_filter('upload_mimes', 'yec_allow_svg_upload');
 
+function yec_get_section_spacing_style($attributes) {
+  $styles = [];
+
+  if (isset($attributes['sectionSpaceTop']) && is_numeric($attributes['sectionSpaceTop'])) {
+    $top = max(0, min(400, (int) $attributes['sectionSpaceTop']));
+    $styles[] = 'margin-top:' . $top . 'px';
+  }
+
+  if (isset($attributes['sectionSpaceBottom']) && is_numeric($attributes['sectionSpaceBottom'])) {
+    $bottom = max(0, min(400, (int) $attributes['sectionSpaceBottom']));
+    $styles[] = 'margin-bottom:' . $bottom . 'px';
+  }
+
+  if (empty($styles)) {
+    return '';
+  }
+
+  return implode(';', $styles) . ';';
+}
+
 function yec_render_hero_section_block($attributes) {
   $eyebrow  = isset($attributes['eyebrow']) ? sanitize_text_field($attributes['eyebrow']) : '';
   $title    = isset($attributes['title']) ? sanitize_text_field($attributes['title']) : '';
@@ -83,10 +103,11 @@ function yec_render_hero_section_block($attributes) {
   $image_alt = isset($attributes['imageAlt']) ? sanitize_text_field($attributes['imageAlt']) : '';
   $layout = isset($attributes['layout']) ? sanitize_key($attributes['layout']) : 'text-first';
   $layout = in_array($layout, ['text-first', 'image-first'], true) ? $layout : 'text-first';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
 
   ob_start();
   ?>
-  <section class="yec-editable-section yec-editable-section--<?php echo esc_attr($layout); ?> yec-editable-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Sekcja hero">
+  <section class="yec-editable-section yec-editable-section--<?php echo esc_attr($layout); ?> yec-editable-section--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Sekcja hero">
     <div class="yec-editable-section__content">
       <?php if ($eyebrow) : ?>
         <p class="yec-editable-section__eyebrow"><?php echo esc_html($eyebrow); ?></p>
@@ -128,10 +149,11 @@ function yec_render_image_text_section_block($attributes) {
   $image_alt  = isset($attributes['imageAlt']) ? sanitize_text_field($attributes['imageAlt']) : '';
   $layout     = isset($attributes['layout']) ? sanitize_key($attributes['layout']) : 'image-left';
   $layout     = in_array($layout, ['image-left', 'image-right'], true) ? $layout : 'image-left';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
 
   ob_start();
   ?>
-  <section class="yec-image-text-section yec-image-text-section--<?php echo esc_attr($layout); ?> yec-image-text-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Sekcja obraz i tekst">
+  <section class="yec-image-text-section yec-image-text-section--<?php echo esc_attr($layout); ?> yec-image-text-section--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Sekcja obraz i tekst">
     <?php if ($image_url) : ?>
       <div class="yec-image-text-section__media">
         <img class="yec-image-text-section__image" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
@@ -175,6 +197,8 @@ function yec_render_benefits_section_block($attributes) {
   if ($has_background && $background_color) {
     $section_style = '--yec-benefits-bg:' . $background_color . ';';
   }
+
+  $section_style .= yec_get_section_spacing_style($attributes);
 
   $cards = [
     [
@@ -269,6 +293,8 @@ function yec_render_google_reviews_block($attributes) {
     $section_style = implode(';', $style_parts) . ';';
   }
 
+  $section_style .= yec_get_section_spacing_style($attributes);
+
   $cards = isset($attributes['cards']) && is_array($attributes['cards']) ? $attributes['cards'] : [];
 
   $cards = array_values(array_filter($cards, function ($card) {
@@ -345,6 +371,7 @@ function yec_render_parallax_image_block($attributes) {
   $parallax_enabled = !isset($attributes['parallaxEnabled']) || !empty($attributes['parallaxEnabled']);
   $parallax_strength = isset($attributes['parallaxStrength']) ? (int) $attributes['parallaxStrength'] : 48;
   $parallax_strength = max(0, min(120, $parallax_strength));
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
 
   if (!$image_url) {
     return '';
@@ -352,7 +379,7 @@ function yec_render_parallax_image_block($attributes) {
 
   ob_start();
   ?>
-  <section class="yec-parallax-image<?php echo $parallax_enabled ? ' is-parallax-enabled' : ''; ?>" data-parallax-enabled="<?php echo $parallax_enabled ? '1' : '0'; ?>" data-parallax-strength="<?php echo esc_attr((string) $parallax_strength); ?>" aria-label="Sekcja obraz parallax">
+  <section class="yec-parallax-image<?php echo $parallax_enabled ? ' is-parallax-enabled' : ''; ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> data-parallax-enabled="<?php echo $parallax_enabled ? '1' : '0'; ?>" data-parallax-strength="<?php echo esc_attr((string) $parallax_strength); ?>" aria-label="Sekcja obraz parallax">
     <div class="yec-parallax-image__media">
       <img class="yec-parallax-image__img" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
     </div>
@@ -370,10 +397,11 @@ function yec_render_about_me_section_block($attributes) {
   $content = isset($attributes['contentText']) ? wp_kses_post((string) $attributes['contentText']) : '';
   $cta_text = isset($attributes['ctaText']) ? sanitize_text_field((string) $attributes['ctaText']) : '';
   $cta_url = isset($attributes['ctaUrl']) ? esc_url((string) $attributes['ctaUrl']) : '';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
 
   ob_start();
   ?>
-  <section class="yec-about-me-section yec-about-me-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Poznaj mnie blizej">
+  <section class="yec-about-me-section yec-about-me-section--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Poznaj mnie blizej">
     <div class="yec-about-me-section__left">
       <?php if ($eyebrow) : ?>
         <p class="yec-about-me-section__eyebrow"><?php echo esc_html($eyebrow); ?></p>
@@ -403,6 +431,7 @@ function yec_render_learning_options_section_block($attributes) {
   $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
   $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
   $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
 
   $cards = [
     [
@@ -427,7 +456,7 @@ function yec_render_learning_options_section_block($attributes) {
 
   ob_start();
   ?>
-  <section class="yec-learning-section yec-learning-section--title-<?php echo esc_attr($title_size); ?>" aria-label="Jak mozesz uczyc sie ze mna">
+  <section class="yec-learning-section yec-learning-section--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Jak mozesz uczyc sie ze mna">
     <?php if ($section_title) : ?>
       <h2 class="yec-learning-section__title"><?php echo esc_html($section_title); ?></h2>
     <?php endif; ?>
@@ -569,6 +598,12 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => 'medium',
       ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
       'subtitle' => [
         'type'    => 'string',
         'default' => 'Indywidualne lekcje online, ktore pomoga Ci w pracy, na egzaminie i w codziennej komunikacji.',
@@ -615,6 +650,12 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => 'medium',
       ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
       'contentText' => [
         'type'    => 'string',
         'default' => 'Pomagam doroslym i mlodziezy rozwijac swobode mowienia, slownictwo i pewnosc siebie.',
@@ -660,6 +701,12 @@ function yec_register_custom_blocks() {
       'titleSize' => [
         'type'    => 'string',
         'default' => 'medium',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
       ],
       'subtitle' => [
         'type'    => 'string',
@@ -764,6 +811,12 @@ function yec_register_custom_blocks() {
         'type'    => 'string',
         'default' => 'medium',
       ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
       'hasBackground' => [
         'type'    => 'boolean',
         'default' => false,
@@ -809,6 +862,12 @@ function yec_register_custom_blocks() {
         'type'    => 'number',
         'default' => 48,
       ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
     ],
   ]);
 
@@ -827,6 +886,12 @@ function yec_register_custom_blocks() {
       'titleSize' => [
         'type'    => 'string',
         'default' => 'medium',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
       ],
       'contentText' => [
         'type'    => 'string',
@@ -854,6 +919,12 @@ function yec_register_custom_blocks() {
       'titleSize' => [
         'type'    => 'string',
         'default' => 'medium',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
       ],
       'card1Title' => [
         'type'    => 'string',

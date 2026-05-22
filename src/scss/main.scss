@@ -20,6 +20,7 @@ body {
   background: white;
   margin: 0;
   color: $yecblack;
+  background-color: #FFFAFC;
 }
 
 .main {
@@ -732,10 +733,7 @@ body {
   gap: 36px;
 }
 
-.yec-about-me-section__left,
-.yec-about-me-section__right {
-  min-height: 320px;
-}
+
 
 .yec-about-me-section__left {
   display: flex;
@@ -838,13 +836,17 @@ body {
 }
 
 .yec-learning-section__card {
-  border: 1px solid #ece9ec;
-  border-radius: 18px;
-  padding: 22px;
+  
+  
+  padding: 22px 22px 0 22px;
   display: flex;
   flex-direction: column;
   gap: 14px;
   background: #fff;
+  border-top-left-radius: 50px;
+  border-bottom-right-radius: 50px;
+  overflow: hidden; 
+  
 }
 
 .yec-learning-section__card-title {
@@ -852,6 +854,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   font-size: 28px;
   line-height: 1.15;
+  padding-top: 20px;
 }
 
 .yec-learning-section__card-text {
@@ -859,14 +862,18 @@ body {
   font-size: 16px;
   line-height: 1.6;
   font-weight: 300;
+  padding-bottom: 20px;
+ 
 }
 
 .yec-learning-section__media {
-  width: 100%;
+  width: calc(100% + 44px);
+  margin-left: -22px;
+  margin-right: -22px;
   aspect-ratio: 1.2;
   overflow: hidden;
-  border-radius: 14px;
   background: #efefef;
+  max-height: 240px;
 }
 
 .yec-learning-section__image {
@@ -877,7 +884,9 @@ body {
 }
 
 .yec-learning-section__placeholder {
-  width: 100%;
+  width: calc(100% + 44px);
+  margin-left: -22px;
+  margin-right: -22px;
   min-height: 160px;
   border-radius: 14px;
   background: #f4f4f4;

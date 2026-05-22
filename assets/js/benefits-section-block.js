@@ -8,6 +8,7 @@
   var PanelBody = components.PanelBody;
   var Button = components.Button;
   var ToggleControl = components.ToggleControl;
+  var RangeControl = components.RangeControl;
   var ColorPalette = components.ColorPalette;
   var SelectControl = components.SelectControl;
   var BaseControl = components.BaseControl;
@@ -26,6 +27,8 @@
       eyebrow: { type: 'string', default: 'Co zyskujesz' },
       title: { type: 'string', default: 'Dlaczego warto uczyc sie ze mna' },
       titleSize: { type: 'string', default: 'medium' },
+      sectionSpaceTop: { type: 'number' },
+      sectionSpaceBottom: { type: 'number' },
       subtitle: { type: 'string', default: 'Skupiamy sie na praktycznych efektach, ktore wykorzystasz od razu.' },
       hasBackground: { type: 'boolean', default: false },
       backgroundColor: { type: 'string', default: '#F7EEF2' },
@@ -54,10 +57,22 @@
       var attributes = props.attributes;
       var setAttributes = props.setAttributes;
       var titleSize = attributes.titleSize || 'medium';
+      var sectionSpaceTop = Number.isFinite(attributes.sectionSpaceTop) ? attributes.sectionSpaceTop : 0;
+      var sectionSpaceBottom = Number.isFinite(attributes.sectionSpaceBottom) ? attributes.sectionSpaceBottom : 0;
       var blockClassName = 'yec-benefits-section yec-benefits-section--title-' + titleSize + (attributes.hasBackground ? ' yec-benefits-section--with-bg' : '');
+      var sectionStyle = {};
+      if (attributes.hasBackground && attributes.backgroundColor) {
+        sectionStyle['--yec-benefits-bg'] = attributes.backgroundColor;
+      }
+      if (Number.isFinite(attributes.sectionSpaceTop)) {
+        sectionStyle.marginTop = sectionSpaceTop + 'px';
+      }
+      if (Number.isFinite(attributes.sectionSpaceBottom)) {
+        sectionStyle.marginBottom = sectionSpaceBottom + 'px';
+      }
       var blockProps = useBlockProps({
         className: blockClassName,
-        style: attributes.hasBackground && attributes.backgroundColor ? { '--yec-benefits-bg': attributes.backgroundColor } : undefined,
+        style: Object.keys(sectionStyle).length ? sectionStyle : undefined,
       });
 
       var cards = [
@@ -98,6 +113,31 @@
                   })
                 )
               : null
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(RangeControl, {
+              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceTop,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceTop: value || 0 });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceBottom,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceBottom: value || 0 });
+              },
+            })
           ),
           createElement(
             PanelBody,

@@ -40,6 +40,12 @@
         type: 'number',
         default: 48,
       },
+      sectionSpaceTop: {
+        type: 'number',
+      },
+      sectionSpaceBottom: {
+        type: 'number',
+      },
     },
     edit: function (props) {
       var attributes = props.attributes;
@@ -49,9 +55,19 @@
       var imageAlt = attributes.imageAlt || '';
       var parallaxEnabled = attributes.parallaxEnabled !== false;
       var parallaxStrength = Number.isFinite(attributes.parallaxStrength) ? attributes.parallaxStrength : 48;
+      var sectionSpaceTop = Number.isFinite(attributes.sectionSpaceTop) ? attributes.sectionSpaceTop : 0;
+      var sectionSpaceBottom = Number.isFinite(attributes.sectionSpaceBottom) ? attributes.sectionSpaceBottom : 0;
+      var sectionSpacingStyle = {};
+      if (Number.isFinite(attributes.sectionSpaceTop)) {
+        sectionSpacingStyle.marginTop = sectionSpaceTop + 'px';
+      }
+      if (Number.isFinite(attributes.sectionSpaceBottom)) {
+        sectionSpacingStyle.marginBottom = sectionSpaceBottom + 'px';
+      }
 
       var blockProps = useBlockProps({
         className: 'yec-parallax-image' + (parallaxEnabled ? ' is-parallax-enabled' : ''),
+        style: Object.keys(sectionSpacingStyle).length ? sectionSpacingStyle : undefined,
       });
 
       return createElement(
@@ -81,6 +97,24 @@
               disabled: !parallaxEnabled,
               onChange: function (value) {
                 setAttributes({ parallaxStrength: value || 0 });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceTop,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceTop: value || 0 });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceBottom,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceBottom: value || 0 });
               },
             })
           )

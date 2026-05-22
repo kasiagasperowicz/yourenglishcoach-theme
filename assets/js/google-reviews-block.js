@@ -44,6 +44,12 @@
         type: 'string',
         default: 'medium',
       },
+      sectionSpaceTop: {
+        type: 'number',
+      },
+      sectionSpaceBottom: {
+        type: 'number',
+      },
       hasBackground: {
         type: 'boolean',
         default: false,
@@ -75,18 +81,26 @@
       var cards = Array.isArray(attributes.cards) ? attributes.cards.map(ensureCardShape) : [];
       var sectionTitle = attributes.sectionTitle || '';
       var titleSize = attributes.titleSize || 'medium';
+      var sectionSpaceTop = Number.isFinite(attributes.sectionSpaceTop) ? attributes.sectionSpaceTop : 0;
+      var sectionSpaceBottom = Number.isFinite(attributes.sectionSpaceBottom) ? attributes.sectionSpaceBottom : 0;
       var hasBackground = !!attributes.hasBackground;
       var backgroundColor = attributes.backgroundColor || '#F7EEF2';
       var backgroundImageId = attributes.backgroundImageId;
       var backgroundImageUrl = attributes.backgroundImageUrl || '';
+      var sectionStyle = {};
+      if (hasBackground) {
+        sectionStyle['--yec-google-reviews-bg-color'] = backgroundColor;
+        sectionStyle['--yec-google-reviews-bg-image'] = backgroundImageUrl ? 'url(' + backgroundImageUrl + ')' : 'none';
+      }
+      if (Number.isFinite(attributes.sectionSpaceTop)) {
+        sectionStyle.marginTop = sectionSpaceTop + 'px';
+      }
+      if (Number.isFinite(attributes.sectionSpaceBottom)) {
+        sectionStyle.marginBottom = sectionSpaceBottom + 'px';
+      }
       var blockProps = useBlockProps({
         className: 'yec-google-reviews yec-google-reviews--title-' + titleSize + (hasBackground ? ' yec-google-reviews--with-bg' : ''),
-        style: hasBackground
-          ? {
-              '--yec-google-reviews-bg-color': backgroundColor,
-              '--yec-google-reviews-bg-image': backgroundImageUrl ? 'url(' + backgroundImageUrl + ')' : 'none',
-            }
-          : undefined,
+        style: Object.keys(sectionStyle).length ? sectionStyle : undefined,
       });
 
       function updateCard(index, patch) {
@@ -136,6 +150,24 @@
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceTop,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceTop: value || 0 });
+              },
+            }),
+            createElement(RangeControl, {
+              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              min: 0,
+              max: 240,
+              value: sectionSpaceBottom,
+              onChange: function (value) {
+                setAttributes({ sectionSpaceBottom: value || 0 });
               },
             }),
             createElement(ToggleControl, {
