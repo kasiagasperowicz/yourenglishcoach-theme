@@ -740,6 +740,40 @@ function yec_render_contact_form_section_block($attributes) {
   return ob_get_clean();
 }
 
+function yec_render_google_map_section_block($attributes) {
+  $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+  $address = isset($attributes['address']) ? sanitize_text_field((string) $attributes['address']) : 'sw. Leonarda 6, 60-654 Poznan';
+  $map_height = isset($attributes['mapHeight']) ? (int) $attributes['mapHeight'] : 420;
+  $map_height = max(240, min(720, $map_height));
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
+  $maps_query = rawurlencode($address);
+  $embed_url = 'https://www.google.com/maps?q=' . $maps_query . '&z=16&output=embed';
+
+  ob_start();
+  ?>
+  <section class="yec-google-map yec-google-map--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Mapa Google">
+    <?php if ($section_title) : ?>
+      <h2 class="yec-google-map__title"><?php echo esc_html($section_title); ?></h2>
+    <?php endif; ?>
+
+    <div class="yec-google-map__frame-wrap" style="--yec-google-map-height: <?php echo esc_attr((string) $map_height); ?>px;">
+      <iframe
+        class="yec-google-map__iframe"
+        src="<?php echo esc_url($embed_url); ?>"
+        title="<?php echo esc_attr($address); ?>"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
 function yec_send_contact_email($recipient_email, $subject, $body, $reply_to_email, $from_email = '') {
   $headers = [
     'Content-Type: text/plain; charset=UTF-8',
@@ -1152,6 +1186,7 @@ function yec_register_custom_blocks() {
   $overlay_banner_script_path = get_template_directory() . '/assets/js/overlay-banner-section-block.js';
   $for_whom_script_path = get_template_directory() . '/assets/js/for-whom-section-block.js';
   $contact_form_script_path = get_template_directory() . '/assets/js/contact-form-section-block.js';
+  $google_map_script_path = get_template_directory() . '/assets/js/google-map-section-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -1190,6 +1225,10 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($contact_form_script_path)) {
+    return;
+  }
+
+  if (!file_exists($google_map_script_path)) {
     return;
   }
 
@@ -1270,6 +1309,14 @@ function yec_register_custom_blocks() {
     get_template_directory_uri() . '/assets/js/contact-form-section-block.js',
     ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
     filemtime($contact_form_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-google-map-section-block',
+    get_template_directory_uri() . '/assets/js/google-map-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($google_map_script_path),
     true
   );
 
@@ -1881,6 +1928,35 @@ function yec_register_custom_blocks() {
       'ctaText' => [
         'type'    => 'string',
         'default' => 'Wyslij wiadomosc',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
+    ],
+  ]);
+
+  register_block_type('yec/google-map-section', [
+    'editor_script'   => 'yec-google-map-section-block',
+    'render_callback' => 'yec_render_google_map_section_block',
+    'attributes'      => [
+      'sectionTitle' => [
+        'type'    => 'string',
+        'default' => 'Gdzie mnie znajdziesz',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
+      'address' => [
+        'type'    => 'string',
+        'default' => 'sw. Leonarda 6, 60-654 Poznan',
+      ],
+      'mapHeight' => [
+        'type'    => 'number',
+        'default' => 420,
       ],
       'sectionSpaceTop' => [
         'type' => 'number',

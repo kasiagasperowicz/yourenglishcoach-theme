@@ -1317,3 +1317,54 @@ body {
 .yec-cta__button.yec-contact-form__submit {
   border: none;
 }
+
+// ─── Google Map Section ────────────────────────────────────────────────
+
+.yec-google-map {
+  max-width: 1120px;
+  margin: 64px auto;
+  padding: 0 20px;
+}
+
+.yec-google-map__title {
+  margin: 0 0 18px;
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.yec-google-map--title-large .yec-google-map__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-google-map--title-medium .yec-google-map__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-google-map--title-small .yec-google-map__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
+
+.yec-google-map__frame-wrap {
+  --yec-google-map-height: 420px;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.yec-google-map__iframe {
+  width: 100%;
+  height: var(--yec-google-map-height);
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 920px) {
+  .yec-google-map {
+    margin: 48px auto;
+  }
+
+  .yec-google-map__frame-wrap {
+    --yec-google-map-height: 360px;
+  }
+}
