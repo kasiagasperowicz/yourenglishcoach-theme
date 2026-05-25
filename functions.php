@@ -602,6 +602,545 @@ function yec_render_for_whom_section_block($attributes) {
   return ob_get_clean();
 }
 
+function yec_render_contact_form_section_block($attributes) {
+  $section_title = isset($attributes['sectionTitle']) ? sanitize_text_field((string) $attributes['sectionTitle']) : '';
+  $title_size = isset($attributes['titleSize']) ? sanitize_key((string) $attributes['titleSize']) : 'medium';
+  $title_size = in_array($title_size, ['large', 'medium', 'small'], true) ? $title_size : 'medium';
+  $content_text = isset($attributes['contentText']) ? wp_kses_post((string) $attributes['contentText']) : '';
+  $phone = isset($attributes['phone']) ? sanitize_text_field((string) $attributes['phone']) : '';
+  $email = isset($attributes['email']) ? sanitize_text_field((string) $attributes['email']) : '';
+  $address = isset($attributes['address']) ? sanitize_text_field((string) $attributes['address']) : '';
+  $facebook_url = isset($attributes['facebookUrl']) ? esc_url((string) $attributes['facebookUrl']) : '';
+  $facebook_icon_url = isset($attributes['facebookIconUrl']) ? esc_url((string) $attributes['facebookIconUrl']) : '';
+  $facebook_icon_alt = isset($attributes['facebookIconAlt']) ? sanitize_text_field((string) $attributes['facebookIconAlt']) : 'Facebook';
+  $instagram_url = isset($attributes['instagramUrl']) ? esc_url((string) $attributes['instagramUrl']) : '';
+  $instagram_icon_url = isset($attributes['instagramIconUrl']) ? esc_url((string) $attributes['instagramIconUrl']) : '';
+  $instagram_icon_alt = isset($attributes['instagramIconAlt']) ? sanitize_text_field((string) $attributes['instagramIconAlt']) : 'Instagram';
+  $form_title = isset($attributes['formTitle']) ? sanitize_text_field((string) $attributes['formTitle']) : '';
+  $cta_text = isset($attributes['ctaText']) ? sanitize_text_field((string) $attributes['ctaText']) : 'Wyslij wiadomosc';
+  $section_spacing_style = yec_get_section_spacing_style($attributes);
+  $phone_href = 'tel:' . preg_replace('/[^0-9+]/', '', $phone);
+  $email_href = is_email($email) ? 'mailto:' . $email : '';
+  $maps_url = $address ? 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($address) : '';
+  $status = isset($_GET['yec-contact-status']) ? sanitize_key((string) wp_unslash($_GET['yec-contact-status'])) : '';
+  $status_message = '';
+  $status_class = '';
+
+  if ('success' === $status) {
+    $status_class = 'is-success';
+    $status_message = 'Dziekuje! Twoja wiadomosc zostala wyslana.';
+  } elseif ('invalid' === $status) {
+    $status_class = 'is-error';
+    $status_message = 'Uzupelnij poprawnie wszystkie pola formularza.';
+  } elseif ('security' === $status) {
+    $status_class = 'is-error';
+    $status_message = 'Nie udalo sie wyslac formularza. Sprobuj ponownie.';
+  } elseif ('config' === $status) {
+    $status_class = 'is-error';
+    $status_message = 'Brak poprawnego adresu odbiorcy. Ustaw go w panelu WordPress: Ustawienia -> Ogolne.';
+  } elseif ('error' === $status) {
+    $status_class = 'is-error';
+    $status_message = 'Wystapil blad podczas wysylki. Sprobuj ponownie.';
+    if (is_user_logged_in() && current_user_can('manage_options')) {
+      $mail_error = (string) get_transient('yec_contact_form_last_mail_error');
+      if ($mail_error) {
+        $status_message .= ' Szczegoly: ' . $mail_error;
+      }
+    }
+  }
+
+  ob_start();
+  ?>
+  <section id="yec-contact-form" class="yec-contact-form yec-contact-form--title-<?php echo esc_attr($title_size); ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> aria-label="Formularz kontaktowy">
+    <div class="yec-contact-form__layout">
+      <div class="yec-contact-form__left">
+        <?php if ($section_title) : ?>
+          <h2 class="yec-contact-form__title"><?php echo esc_html($section_title); ?></h2>
+        <?php endif; ?>
+
+        <?php if ($content_text) : ?>
+          <p class="yec-contact-form__text"><?php echo wp_kses_post($content_text); ?></p>
+        <?php endif; ?>
+
+        <?php if ($phone) : ?>
+          <a class="yec-contact-form__contact-line" href="<?php echo esc_url($phone_href ? $phone_href : '#'); ?>"><?php echo esc_html($phone); ?></a>
+        <?php endif; ?>
+
+        <?php if ($email) : ?>
+          <?php if ($email_href) : ?>
+            <a class="yec-contact-form__contact-line" href="<?php echo esc_url($email_href); ?>"><?php echo esc_html($email); ?></a>
+          <?php else : ?>
+            <p class="yec-contact-form__contact-line"><?php echo esc_html($email); ?></p>
+          <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($address) : ?>
+          <a class="yec-contact-form__contact-line" href="<?php echo esc_url($maps_url ? $maps_url : '#'); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($address); ?></a>
+        <?php endif; ?>
+
+        <div class="yec-contact-form__socials">
+          <a class="yec-contact-form__social" href="<?php echo esc_url($facebook_url ? $facebook_url : '#'); ?>" aria-label="Facebook">
+            <?php if ($facebook_icon_url) : ?>
+              <img src="<?php echo esc_url($facebook_icon_url); ?>" alt="<?php echo esc_attr($facebook_icon_alt); ?>">
+            <?php else : ?>
+              <span>FB</span>
+            <?php endif; ?>
+          </a>
+
+          <a class="yec-contact-form__social" href="<?php echo esc_url($instagram_url ? $instagram_url : '#'); ?>" aria-label="Instagram">
+            <?php if ($instagram_icon_url) : ?>
+              <img src="<?php echo esc_url($instagram_icon_url); ?>" alt="<?php echo esc_attr($instagram_icon_alt); ?>">
+            <?php else : ?>
+              <span>IG</span>
+            <?php endif; ?>
+          </a>
+        </div>
+      </div>
+
+      <div class="yec-contact-form__right">
+        <?php if ($form_title) : ?>
+          <h3 class="yec-contact-form__form-title"><?php echo esc_html($form_title); ?></h3>
+        <?php endif; ?>
+
+        <?php if ($status_message) : ?>
+          <div class="yec-contact-form__notice <?php echo esc_attr($status_class); ?>" role="status"><?php echo esc_html($status_message); ?></div>
+        <?php endif; ?>
+
+        <form method="post" action="" class="yec-contact-form__form">
+          <input type="hidden" name="yec_contact_form_action" value="submit">
+          <?php wp_nonce_field('yec_contact_form_submit', 'yec_contact_form_nonce'); ?>
+
+          <p class="yec-contact-form__field">
+            <label for="yec-contact-name">Imię</label>
+            <input id="yec-contact-name" class="yec-contact-form__input" type="text" name="yec_contact_name" required>
+          </p>
+
+          <p class="yec-contact-form__field">
+            <label for="yec-contact-email">Email</label>
+            <input id="yec-contact-email" class="yec-contact-form__input" type="email" name="yec_contact_email" required>
+          </p>
+
+          <p class="yec-contact-form__field yec-contact-form__field--honeypot" aria-hidden="true">
+            <label for="yec-contact-website">Website</label>
+            <input id="yec-contact-website" type="text" name="yec_contact_website" tabindex="-1" autocomplete="off">
+          </p>
+
+          <p class="yec-contact-form__field">
+            <label for="yec-contact-message">Treść</label>
+            <textarea id="yec-contact-message" class="yec-contact-form__textarea" name="yec_contact_message" required></textarea>
+          </p>
+
+          <button class="yec-cta__button yec-contact-form__submit" type="submit"><?php echo esc_html($cta_text); ?></button>
+        </form>
+      </div>
+    </div>
+  </section>
+  <?php
+
+  return ob_get_clean();
+}
+
+function yec_send_contact_email($recipient_email, $subject, $body, $reply_to_email, $from_email = '') {
+  $headers = [
+    'Content-Type: text/plain; charset=UTF-8',
+    'Reply-To: ' . $reply_to_email,
+  ];
+
+  if ($from_email && is_email($from_email)) {
+    $headers[] = 'From: Your English Coach <' . $from_email . '>';
+  }
+
+  delete_transient('yec_contact_form_last_mail_error');
+
+  $sent = wp_mail($recipient_email, $subject, $body, $headers);
+
+  // Fallback for hosts that reject custom headers but allow default wp_mail format.
+  if (!$sent) {
+    $sent = wp_mail($recipient_email, $subject, $body);
+  }
+
+  if ($sent) {
+    return true;
+  }
+
+  // Local fallback: try SMTP listeners commonly used by local dev tools.
+  if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
+    return false;
+  }
+
+  $smtp_ports = [1025, 10025, 2525];
+  $smtp_errors = [];
+
+  foreach ($smtp_ports as $smtp_port) {
+    try {
+      $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+      $mailer->CharSet = 'UTF-8';
+      $mailer->isSMTP();
+      $mailer->Host = '127.0.0.1';
+      $mailer->Port = (int) $smtp_port;
+      $mailer->SMTPAuth = false;
+      $mailer->SMTPAutoTLS = false;
+      $mailer->Timeout = 5;
+      $mailer->isHTML(false);
+
+      $effective_from = $from_email && is_email($from_email) ? $from_email : 'no-reply@localhost';
+      $mailer->setFrom($effective_from, 'Your English Coach');
+      $mailer->addAddress($recipient_email);
+      if ($reply_to_email && is_email($reply_to_email)) {
+        $mailer->addReplyTo($reply_to_email);
+      }
+      $mailer->Subject = $subject;
+      $mailer->Body = $body;
+
+      if ($mailer->send()) {
+        return true;
+      }
+    } catch (Throwable $error) {
+      $smtp_errors[] = sprintf('SMTP localhost:%d - %s', $smtp_port, $error->getMessage());
+    }
+  }
+
+  // Configurable fallback: use SMTP credentials from WP Admin settings.
+  $smtp_enabled = (bool) get_option('yec_contact_form_smtp_enabled', false);
+  $smtp_host = trim((string) get_option('yec_contact_form_smtp_host', ''));
+  $smtp_port = (int) get_option('yec_contact_form_smtp_port', 587);
+  $smtp_secure = sanitize_key((string) get_option('yec_contact_form_smtp_secure', 'tls'));
+  $smtp_username = trim((string) get_option('yec_contact_form_smtp_username', ''));
+  $smtp_password = (string) get_option('yec_contact_form_smtp_password', '');
+  $smtp_from_email = sanitize_email((string) get_option('yec_contact_form_smtp_from_email', ''));
+  $smtp_from_name = trim((string) get_option('yec_contact_form_smtp_from_name', 'Your English Coach'));
+
+  if ($smtp_enabled && $smtp_host && $smtp_port > 0 && $smtp_username && $smtp_password) {
+    try {
+      $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+      $mailer->CharSet = 'UTF-8';
+      $mailer->isSMTP();
+      $mailer->Host = $smtp_host;
+      $mailer->Port = $smtp_port;
+      $mailer->SMTPAuth = true;
+      $mailer->Username = $smtp_username;
+      $mailer->Password = $smtp_password;
+      $mailer->SMTPAutoTLS = true;
+      $mailer->Timeout = 10;
+      $mailer->isHTML(false);
+
+      if (!in_array($smtp_secure, ['tls', 'ssl'], true)) {
+        $smtp_secure = 'tls';
+      }
+      $mailer->SMTPSecure = $smtp_secure;
+
+      $effective_from = $smtp_from_email && is_email($smtp_from_email)
+        ? $smtp_from_email
+        : ($from_email && is_email($from_email) ? $from_email : $smtp_username);
+
+      $mailer->setFrom($effective_from, $smtp_from_name ? $smtp_from_name : 'Your English Coach');
+      $mailer->addAddress($recipient_email);
+      if ($reply_to_email && is_email($reply_to_email)) {
+        $mailer->addReplyTo($reply_to_email);
+      }
+      $mailer->Subject = $subject;
+      $mailer->Body = $body;
+
+      if ($mailer->send()) {
+        return true;
+      }
+    } catch (Throwable $error) {
+      $smtp_errors[] = 'SMTP custom - ' . $error->getMessage();
+    }
+  }
+
+  if (!empty($smtp_errors)) {
+    set_transient('yec_contact_form_last_mail_error', implode(' | ', $smtp_errors), 10 * MINUTE_IN_SECONDS);
+  }
+
+  return false;
+}
+
+function yec_handle_contact_form_submission() {
+  $request_method = isset($_SERVER['REQUEST_METHOD']) ? strtoupper((string) $_SERVER['REQUEST_METHOD']) : '';
+  if ('POST' !== $request_method) {
+    return;
+  }
+
+  $form_action = isset($_POST['yec_contact_form_action']) ? sanitize_key((string) wp_unslash($_POST['yec_contact_form_action'])) : '';
+  if ('submit' !== $form_action) {
+    return;
+  }
+
+  $redirect_url = wp_get_referer();
+  if (!$redirect_url) {
+    $redirect_url = home_url('/');
+  }
+  $redirect_url = remove_query_arg('yec-contact-status', $redirect_url);
+
+  $nonce = isset($_POST['yec_contact_form_nonce']) ? (string) wp_unslash($_POST['yec_contact_form_nonce']) : '';
+  if (!$nonce || !wp_verify_nonce($nonce, 'yec_contact_form_submit')) {
+    wp_safe_redirect(add_query_arg('yec-contact-status', 'security', $redirect_url));
+    exit;
+  }
+
+  $honeypot = isset($_POST['yec_contact_website']) ? trim((string) wp_unslash($_POST['yec_contact_website'])) : '';
+  if ('' !== $honeypot) {
+    wp_safe_redirect(add_query_arg('yec-contact-status', 'success', $redirect_url));
+    exit;
+  }
+
+  $name = isset($_POST['yec_contact_name']) ? sanitize_text_field((string) wp_unslash($_POST['yec_contact_name'])) : '';
+  $email = isset($_POST['yec_contact_email']) ? sanitize_email((string) wp_unslash($_POST['yec_contact_email'])) : '';
+  $message = isset($_POST['yec_contact_message']) ? sanitize_textarea_field((string) wp_unslash($_POST['yec_contact_message'])) : '';
+
+  if (!$name || !$email || !is_email($email) || !$message) {
+    wp_safe_redirect(add_query_arg('yec-contact-status', 'invalid', $redirect_url));
+    exit;
+  }
+
+  $recipient_email = sanitize_email((string) get_option('yec_contact_form_recipient_email', ''));
+  if (!$recipient_email || !is_email($recipient_email)) {
+    $recipient_email = sanitize_email((string) get_option('admin_email', ''));
+  }
+
+  if (!$recipient_email || !is_email($recipient_email)) {
+    wp_safe_redirect(add_query_arg('yec-contact-status', 'config', $redirect_url));
+    exit;
+  }
+
+  $subject = sprintf('Nowa wiadomosc ze strony od: %s', $name);
+  $body = "Imie: {$name}\n";
+  $body .= "Email: {$email}\n\n";
+  $body .= "Wiadomosc:\n{$message}\n";
+
+  $site_host = (string) wp_parse_url(home_url('/'), PHP_URL_HOST);
+  $site_host = preg_replace('/[^a-z0-9.-]/i', '', strtolower($site_host));
+  $from_email = $site_host ? 'no-reply@' . $site_host : '';
+
+  $sent = yec_send_contact_email($recipient_email, $subject, $body, $email, $from_email);
+
+  wp_safe_redirect(add_query_arg('yec-contact-status', $sent ? 'success' : 'error', $redirect_url));
+  exit;
+}
+
+function yec_capture_contact_form_mail_error($wp_error) {
+  if (!($wp_error instanceof WP_Error)) {
+    return;
+  }
+
+  $error_message = trim((string) $wp_error->get_error_message());
+  if (!$error_message) {
+    return;
+  }
+
+  set_transient('yec_contact_form_last_mail_error', $error_message, 10 * MINUTE_IN_SECONDS);
+}
+
+function yec_register_contact_form_settings() {
+  register_setting('general', 'yec_contact_form_recipient_email', [
+    'type' => 'string',
+    'sanitize_callback' => 'sanitize_email',
+    'default' => '',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_enabled', [
+    'type' => 'boolean',
+    'sanitize_callback' => 'yec_sanitize_checkbox',
+    'default' => false,
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_host', [
+    'type' => 'string',
+    'sanitize_callback' => 'sanitize_text_field',
+    'default' => '',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_port', [
+    'type' => 'integer',
+    'sanitize_callback' => 'absint',
+    'default' => 587,
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_secure', [
+    'type' => 'string',
+    'sanitize_callback' => 'yec_sanitize_smtp_secure',
+    'default' => 'tls',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_username', [
+    'type' => 'string',
+    'sanitize_callback' => 'sanitize_text_field',
+    'default' => '',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_password', [
+    'type' => 'string',
+    'sanitize_callback' => 'yec_sanitize_smtp_password',
+    'default' => '',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_from_email', [
+    'type' => 'string',
+    'sanitize_callback' => 'sanitize_email',
+    'default' => '',
+  ]);
+
+  register_setting('general', 'yec_contact_form_smtp_from_name', [
+    'type' => 'string',
+    'sanitize_callback' => 'sanitize_text_field',
+    'default' => 'Your English Coach',
+  ]);
+
+  add_settings_field(
+    'yec_contact_form_recipient_email',
+    'Email odbiorcy formularza kontaktowego',
+    'yec_render_contact_form_settings_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_enabled',
+    'Wlacz SMTP dla formularza',
+    'yec_render_contact_form_smtp_enabled_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_host',
+    'SMTP host',
+    'yec_render_contact_form_smtp_host_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_port',
+    'SMTP port',
+    'yec_render_contact_form_smtp_port_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_secure',
+    'SMTP szyfrowanie',
+    'yec_render_contact_form_smtp_secure_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_username',
+    'SMTP login',
+    'yec_render_contact_form_smtp_username_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_password',
+    'SMTP haslo',
+    'yec_render_contact_form_smtp_password_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_from_email',
+    'SMTP from email',
+    'yec_render_contact_form_smtp_from_email_field',
+    'general'
+  );
+
+  add_settings_field(
+    'yec_contact_form_smtp_from_name',
+    'SMTP from name',
+    'yec_render_contact_form_smtp_from_name_field',
+    'general'
+  );
+}
+
+function yec_sanitize_checkbox($value) {
+  return !empty($value) ? 1 : 0;
+}
+
+function yec_sanitize_smtp_secure($value) {
+  $value = sanitize_key((string) $value);
+  if (!in_array($value, ['tls', 'ssl'], true)) {
+    return 'tls';
+  }
+  return $value;
+}
+
+function yec_sanitize_smtp_password($value) {
+  return trim((string) $value);
+}
+
+function yec_render_contact_form_settings_field() {
+  $value = (string) get_option('yec_contact_form_recipient_email', '');
+  if (!$value) {
+    $value = (string) get_option('admin_email', '');
+  }
+  ?>
+  <input type="email" id="yec_contact_form_recipient_email" name="yec_contact_form_recipient_email" value="<?php echo esc_attr($value); ?>" class="regular-text" />
+  <p class="description">Na ten adres beda wysylane wiadomosci z formularza kontaktowego.</p>
+  <?php
+}
+
+function yec_render_contact_form_smtp_enabled_field() {
+  $enabled = !empty(get_option('yec_contact_form_smtp_enabled', false));
+  ?>
+  <label>
+    <input type="checkbox" name="yec_contact_form_smtp_enabled" value="1" <?php checked($enabled); ?> />
+    Uzyj zewnetrznego SMTP (zalecane na local).
+  </label>
+  <?php
+}
+
+function yec_render_contact_form_smtp_host_field() {
+  $value = (string) get_option('yec_contact_form_smtp_host', '');
+  ?>
+  <input type="text" id="yec_contact_form_smtp_host" name="yec_contact_form_smtp_host" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="smtp.gmail.com" />
+  <?php
+}
+
+function yec_render_contact_form_smtp_port_field() {
+  $value = (int) get_option('yec_contact_form_smtp_port', 587);
+  ?>
+  <input type="number" id="yec_contact_form_smtp_port" name="yec_contact_form_smtp_port" value="<?php echo esc_attr((string) $value); ?>" class="small-text" min="1" max="65535" />
+  <?php
+}
+
+function yec_render_contact_form_smtp_secure_field() {
+  $value = (string) get_option('yec_contact_form_smtp_secure', 'tls');
+  ?>
+  <select id="yec_contact_form_smtp_secure" name="yec_contact_form_smtp_secure">
+    <option value="tls" <?php selected($value, 'tls'); ?>>TLS</option>
+    <option value="ssl" <?php selected($value, 'ssl'); ?>>SSL</option>
+  </select>
+  <?php
+}
+
+function yec_render_contact_form_smtp_username_field() {
+  $value = (string) get_option('yec_contact_form_smtp_username', '');
+  ?>
+  <input type="text" id="yec_contact_form_smtp_username" name="yec_contact_form_smtp_username" value="<?php echo esc_attr($value); ?>" class="regular-text" />
+  <?php
+}
+
+function yec_render_contact_form_smtp_password_field() {
+  $value = (string) get_option('yec_contact_form_smtp_password', '');
+  ?>
+  <input type="password" id="yec_contact_form_smtp_password" name="yec_contact_form_smtp_password" value="<?php echo esc_attr($value); ?>" class="regular-text" autocomplete="new-password" />
+  <p class="description">Wpisz haslo aplikacji SMTP.</p>
+  <?php
+}
+
+function yec_render_contact_form_smtp_from_email_field() {
+  $value = (string) get_option('yec_contact_form_smtp_from_email', '');
+  ?>
+  <input type="email" id="yec_contact_form_smtp_from_email" name="yec_contact_form_smtp_from_email" value="<?php echo esc_attr($value); ?>" class="regular-text" placeholder="no-reply@twojadomena.pl" />
+  <?php
+}
+
+function yec_render_contact_form_smtp_from_name_field() {
+  $value = (string) get_option('yec_contact_form_smtp_from_name', 'Your English Coach');
+  ?>
+  <input type="text" id="yec_contact_form_smtp_from_name" name="yec_contact_form_smtp_from_name" value="<?php echo esc_attr($value); ?>" class="regular-text" />
+  <?php
+}
+
 function yec_register_custom_blocks() {
   $editor_script_path = get_template_directory() . '/assets/js/hero-section-block.js';
   $image_text_script_path = get_template_directory() . '/assets/js/image-text-section-block.js';
@@ -612,6 +1151,7 @@ function yec_register_custom_blocks() {
   $learning_options_script_path = get_template_directory() . '/assets/js/learning-options-section-block.js';
   $overlay_banner_script_path = get_template_directory() . '/assets/js/overlay-banner-section-block.js';
   $for_whom_script_path = get_template_directory() . '/assets/js/for-whom-section-block.js';
+  $contact_form_script_path = get_template_directory() . '/assets/js/contact-form-section-block.js';
 
   if (!file_exists($editor_script_path)) {
     return;
@@ -646,6 +1186,10 @@ function yec_register_custom_blocks() {
   }
 
   if (!file_exists($for_whom_script_path)) {
+    return;
+  }
+
+  if (!file_exists($contact_form_script_path)) {
     return;
   }
 
@@ -718,6 +1262,14 @@ function yec_register_custom_blocks() {
     get_template_directory_uri() . '/assets/js/for-whom-section-block.js',
     ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
     filemtime($for_whom_script_path),
+    true
+  );
+
+  wp_register_script(
+    'yec-contact-form-section-block',
+    get_template_directory_uri() . '/assets/js/contact-form-section-block.js',
+    ['wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'],
+    filemtime($contact_form_script_path),
     true
   );
 
@@ -1263,9 +1815,87 @@ function yec_register_custom_blocks() {
       ],
     ],
   ]);
+
+  register_block_type('yec/contact-form-section', [
+    'editor_script'   => 'yec-contact-form-section-block',
+    'render_callback' => 'yec_render_contact_form_section_block',
+    'attributes'      => [
+      'sectionTitle' => [
+        'type'    => 'string',
+        'default' => 'Skontaktuj sie',
+      ],
+      'titleSize' => [
+        'type'    => 'string',
+        'default' => 'medium',
+      ],
+      'contentText' => [
+        'type'    => 'string',
+        'default' => 'Napisz lub zadzwon - odpowiem najszybciej, jak to mozliwe.',
+      ],
+      'phone' => [
+        'type'    => 'string',
+        'default' => '+48 000 000 000',
+      ],
+      'email' => [
+        'type'    => 'string',
+        'default' => 'kontakt@twojadomena.pl',
+      ],
+      'address' => [
+        'type'    => 'string',
+        'default' => 'Poznan, Polska',
+      ],
+      'facebookUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'facebookIconId' => [
+        'type' => 'number',
+      ],
+      'facebookIconUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'facebookIconAlt' => [
+        'type'    => 'string',
+        'default' => 'Facebook',
+      ],
+      'instagramUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'instagramIconId' => [
+        'type' => 'number',
+      ],
+      'instagramIconUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'instagramIconAlt' => [
+        'type'    => 'string',
+        'default' => 'Instagram',
+      ],
+      'formTitle' => [
+        'type'    => 'string',
+        'default' => 'Napisz wiadomosc',
+      ],
+      'ctaText' => [
+        'type'    => 'string',
+        'default' => 'Wyslij wiadomosc',
+      ],
+      'sectionSpaceTop' => [
+        'type' => 'number',
+      ],
+      'sectionSpaceBottom' => [
+        'type' => 'number',
+      ],
+    ],
+  ]);
 }
 
 add_action('init', 'yec_register_custom_blocks');
+add_action('init', 'yec_handle_contact_form_submission');
+add_action('admin_init', 'yec_register_contact_form_settings');
+add_action('wp_mail_failed', 'yec_capture_contact_form_mail_error');
 
 function yec_set_static_front_page() {
   $front_page = get_page_by_path('strona-glowna');

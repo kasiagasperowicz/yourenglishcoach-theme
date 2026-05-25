@@ -1075,6 +1075,7 @@ body {
   font-family: 'Cormorant Garamond', serif;
   line-height: 1.1;
   font-size: clamp(30px, 4vw, 48px);
+  font-weight: 700;
 }
 
 .yec-for-whom--title-large .yec-for-whom__title,
@@ -1141,6 +1142,7 @@ body {
   color: #fff;
   font-family: 'Cormorant Garamond', serif;
   line-height: 1.1;
+  font-weight: 700;
 }
 
 .yec-for-whom__item:hover .yec-for-whom__image,
@@ -1157,4 +1159,161 @@ body {
   .yec-for-whom__grid {
     grid-template-columns: 1fr;
   }
+}
+
+// ─── Contact Form Section ──────────────────────────────────────────────
+
+.yec-contact-form {
+  max-width: 1120px;
+  margin: 64px auto;
+  padding: 0 20px;
+}
+
+.yec-contact-form__layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.yec-contact-form__left,
+.yec-contact-form__right {
+  border-radius: 22px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.yec-contact-form__title {
+  margin: 0 0 14px;
+  font-family: 'Cormorant Garamond', serif;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.yec-contact-form--title-large .yec-contact-form__title {
+  font-size: clamp(36px, 5vw, 60px);
+}
+
+.yec-contact-form--title-medium .yec-contact-form__title {
+  font-size: clamp(30px, 4vw, 46px);
+}
+
+.yec-contact-form--title-small .yec-contact-form__title {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
+
+.yec-contact-form__text {
+  margin: 0 0 20px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: #2e2e2e;
+}
+
+.yec-contact-form__contact-line {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #2e2e2e;
+  display: block;
+  text-decoration: none;
+}
+
+.yec-contact-form__contact-line:hover,
+.yec-contact-form__contact-line:focus-visible {
+  text-decoration: underline;
+}
+
+.yec-contact-form__socials {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+}
+
+.yec-contact-form__social {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #1f1f1f;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.yec-contact-form__social img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.yec-contact-form__form-title {
+  margin: 0 0 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.1;
+}
+
+.yec-contact-form__field {
+  margin: 0 0 12px;
+}
+
+.yec-contact-form__field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.yec-contact-form__field--honeypot {
+  position: absolute;
+  left: -9999px;
+}
+
+.yec-contact-form__input,
+.yec-contact-form__textarea {
+  width: 90%;
+  border: 1px solid #dbd4cd;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f1f1f;
+  font: inherit;
+  padding: 12px 14px;
+}
+
+.yec-contact-form__textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.yec-contact-form__notice {
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.yec-contact-form__notice.is-success {
+  background: #ecf8ef;
+  color: #256b3d;
+}
+
+.yec-contact-form__notice.is-error {
+  background: #fdeeee;
+  color: #8a2f2f;
+}
+
+@media (max-width: 920px) {
+  .yec-contact-form {
+    margin: 48px auto;
+  }
+
+  .yec-contact-form__layout {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+}
+
+.yec-cta__button.yec-contact-form__submit {
+  border: none;
 }
