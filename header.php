@@ -21,7 +21,18 @@
       <?php endif; ?>
     </div>
 
-    <nav class="yec-main-nav" aria-label="Menu glowne">
+    <button
+      class="yec-nav-toggle"
+      type="button"
+      aria-label="Otworz menu"
+      aria-expanded="false"
+      aria-controls="yec-main-nav">
+      <span class="yec-nav-toggle__bar" aria-hidden="true"></span>
+      <span class="yec-nav-toggle__bar" aria-hidden="true"></span>
+      <span class="yec-nav-toggle__bar" aria-hidden="true"></span>
+    </button>
+
+    <nav id="yec-main-nav" class="yec-main-nav" aria-label="Menu glowne">
       <?php
       wp_nav_menu([
         'theme_location' => 'primary',

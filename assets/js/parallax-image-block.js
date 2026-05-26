@@ -32,6 +32,17 @@
         type: 'string',
         default: '',
       },
+      mobileImageId: {
+        type: 'number',
+      },
+      mobileImageUrl: {
+        type: 'string',
+        default: '',
+      },
+      mobileImageAlt: {
+        type: 'string',
+        default: '',
+      },
       parallaxEnabled: {
         type: 'boolean',
         default: true,
@@ -53,6 +64,9 @@
       var imageId = attributes.imageId;
       var imageUrl = attributes.imageUrl || '';
       var imageAlt = attributes.imageAlt || '';
+      var mobileImageId = attributes.mobileImageId;
+      var mobileImageUrl = attributes.mobileImageUrl || '';
+      var mobileImageAlt = attributes.mobileImageAlt || '';
       var parallaxEnabled = attributes.parallaxEnabled !== false;
       var parallaxStrength = Number.isFinite(attributes.parallaxStrength) ? attributes.parallaxStrength : 48;
       var sectionSpaceTop = Number.isFinite(attributes.sectionSpaceTop) ? attributes.sectionSpaceTop : 0;
@@ -69,6 +83,54 @@
         className: 'yec-parallax-image' + (parallaxEnabled ? ' is-parallax-enabled' : ''),
         style: Object.keys(sectionSpacingStyle).length ? sectionSpacingStyle : undefined,
       });
+
+      var desktopPreviewUrl = imageUrl || mobileImageUrl;
+      var desktopPreviewAlt = imageAlt || mobileImageAlt;
+      var mobilePreviewUrl = mobileImageUrl || imageUrl;
+      var mobilePreviewAlt = mobileImageAlt || imageAlt;
+
+      var renderImageControl = function (label, currentImageUrl, currentImageAlt, currentImageId, onSelect, onClear) {
+        return createElement(
+          'div',
+          { style: { marginBottom: '16px' } },
+          createElement('p', { style: { margin: '0 0 8px', fontWeight: 600 } }, label),
+          currentImageUrl
+            ? createElement('img', {
+                src: currentImageUrl,
+                alt: currentImageAlt,
+                style: {
+                  display: 'block',
+                  width: '100%',
+                  maxWidth: '100%',
+                  height: 'auto',
+                  marginBottom: '8px',
+                  borderRadius: '8px',
+                },
+              })
+            : null,
+          createElement(MediaUploadCheck, {},
+            createElement(MediaUpload, {
+              onSelect: onSelect,
+              allowedTypes: ['image'],
+              value: currentImageId,
+              render: function (renderProps) {
+                return createElement(Button, {
+                  variant: 'secondary',
+                  onClick: renderProps.open,
+                }, currentImageUrl ? __('Zmien obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
+              },
+            })
+          ),
+          currentImageUrl
+            ? createElement(Button, {
+                variant: 'link',
+                isDestructive: true,
+                onClick: onClear,
+                style: { display: 'block', marginTop: '6px' },
+              }, __('Usun obraz', 'yourenglishcoachtheme'))
+            : null
+        );
+      };
 
       return createElement(
         Fragment,
@@ -117,6 +179,45 @@
                 setAttributes({ sectionSpaceBottom: value || 0 });
               },
             })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Obrazy responsywne', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            renderImageControl(
+              __('Obraz desktopowy', 'yourenglishcoachtheme'),
+              imageUrl,
+              imageAlt,
+              imageId,
+              function (media) {
+                setAttributes({
+                  imageId: media && media.id ? media.id : undefined,
+                  imageUrl: media && media.url ? media.url : '',
+                  imageAlt: media && media.alt ? media.alt : '',
+                });
+              },
+              function () {
+                setAttributes({ imageId: undefined, imageUrl: '', imageAlt: '' });
+              }
+            ),
+            renderImageControl(
+              __('Obraz mobilny', 'yourenglishcoachtheme'),
+              mobileImageUrl,
+              mobileImageAlt,
+              mobileImageId,
+              function (media) {
+                setAttributes({
+                  mobileImageId: media && media.id ? media.id : undefined,
+                  mobileImageUrl: media && media.url ? media.url : '',
+                  mobileImageAlt: media && media.alt ? media.alt : '',
+                });
+              },
+              function () {
+                setAttributes({ mobileImageId: undefined, mobileImageUrl: '', mobileImageAlt: '' });
+              }
+            )
           )
         ),
         createElement(
@@ -130,47 +231,27 @@
                 '--yec-parallax-strength': String(parallaxStrength),
               },
             },
-            imageUrl
-              ? createElement('img', {
-                  className: 'yec-parallax-image__img',
-                  src: imageUrl,
-                  alt: imageAlt,
-                })
+            desktopPreviewUrl
+              ? createElement(
+                  'picture',
+                  null,
+                  createElement('source', {
+                    media: '(max-width: 860px)',
+                    srcSet: mobilePreviewUrl,
+                  }),
+                  createElement('img', {
+                    className: 'yec-parallax-image__img',
+                    src: desktopPreviewUrl,
+                    alt: desktopPreviewAlt,
+                  })
+                )
               : createElement(
                   'div',
                   { className: 'yec-parallax-image__placeholder' },
                   __('Wybierz obraz, aby aktywowac sekcje parallax.', 'yourenglishcoachtheme')
                 )
           ),
-          createElement(MediaUploadCheck, {},
-            createElement(MediaUpload, {
-              onSelect: function (media) {
-                setAttributes({
-                  imageId: media && media.id ? media.id : undefined,
-                  imageUrl: media && media.url ? media.url : '',
-                  imageAlt: media && media.alt ? media.alt : '',
-                });
-              },
-              allowedTypes: ['image'],
-              value: imageId,
-              render: function (renderProps) {
-                return createElement(Button, {
-                  variant: 'secondary',
-                  onClick: renderProps.open,
-                  style: { marginTop: '12px' },
-                }, imageUrl ? __('Zmien obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
-              },
-            })
-          ),
-          imageUrl
-            ? createElement(Button, {
-                variant: 'link',
-                isDestructive: true,
-                onClick: function () {
-                  setAttributes({ imageId: undefined, imageUrl: '', imageAlt: '' });
-                },
-              }, __('Usun obraz', 'yourenglishcoachtheme'))
-            : null
+          null
         )
       );
     },

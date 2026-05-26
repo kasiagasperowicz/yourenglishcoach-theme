@@ -368,20 +368,30 @@ function yec_render_google_reviews_block($attributes) {
 function yec_render_parallax_image_block($attributes) {
   $image_url = isset($attributes['imageUrl']) ? esc_url((string) $attributes['imageUrl']) : '';
   $image_alt = isset($attributes['imageAlt']) ? sanitize_text_field((string) $attributes['imageAlt']) : '';
+  $mobile_image_url = isset($attributes['mobileImageUrl']) ? esc_url((string) $attributes['mobileImageUrl']) : '';
+  $mobile_image_alt = isset($attributes['mobileImageAlt']) ? sanitize_text_field((string) $attributes['mobileImageAlt']) : '';
   $parallax_enabled = !isset($attributes['parallaxEnabled']) || !empty($attributes['parallaxEnabled']);
   $parallax_strength = isset($attributes['parallaxStrength']) ? (int) $attributes['parallaxStrength'] : 48;
   $parallax_strength = max(0, min(120, $parallax_strength));
   $section_spacing_style = yec_get_section_spacing_style($attributes);
 
-  if (!$image_url) {
+  if (!$image_url && !$mobile_image_url) {
     return '';
   }
+
+  $desktop_image_url = $image_url ? $image_url : $mobile_image_url;
+  $desktop_image_alt = $image_alt ? $image_alt : $mobile_image_alt;
+  $mobile_image_url = $mobile_image_url ? $mobile_image_url : $desktop_image_url;
+  $mobile_image_alt = $mobile_image_alt ? $mobile_image_alt : $desktop_image_alt;
 
   ob_start();
   ?>
   <section class="yec-parallax-image<?php echo $parallax_enabled ? ' is-parallax-enabled' : ''; ?>"<?php echo $section_spacing_style ? ' style="' . esc_attr($section_spacing_style) . '"' : ''; ?> data-parallax-enabled="<?php echo $parallax_enabled ? '1' : '0'; ?>" data-parallax-strength="<?php echo esc_attr((string) $parallax_strength); ?>" aria-label="Sekcja obraz parallax">
     <div class="yec-parallax-image__media">
-      <img class="yec-parallax-image__img" src="<?php echo esc_url($image_url); ?>" alt="<?php echo esc_attr($image_alt); ?>">
+      <picture>
+        <source media="(max-width: 860px)" srcset="<?php echo esc_url($mobile_image_url); ?>">
+        <img class="yec-parallax-image__img" src="<?php echo esc_url($desktop_image_url); ?>" alt="<?php echo esc_attr($desktop_image_alt); ?>" data-mobile-alt="<?php echo esc_attr($mobile_image_alt); ?>">
+      </picture>
     </div>
   </section>
   <?php
@@ -679,7 +689,7 @@ function yec_render_contact_form_section_block($attributes) {
         <?php endif; ?>
 
         <div class="yec-contact-form__socials">
-          <a class="yec-contact-form__social" href="<?php echo esc_url($facebook_url ? $facebook_url : '#'); ?>" aria-label="Facebook">
+          <a class="yec-contact-form__social yec-contact-form__social-1" href="<?php echo esc_url($facebook_url ? $facebook_url : '#'); ?>" aria-label="Facebook">
             <?php if ($facebook_icon_url) : ?>
               <img src="<?php echo esc_url($facebook_icon_url); ?>" alt="<?php echo esc_attr($facebook_icon_alt); ?>">
             <?php else : ?>
@@ -687,7 +697,7 @@ function yec_render_contact_form_section_block($attributes) {
             <?php endif; ?>
           </a>
 
-          <a class="yec-contact-form__social" href="<?php echo esc_url($instagram_url ? $instagram_url : '#'); ?>" aria-label="Instagram">
+          <a class="yec-contact-form__social yec-contact-form__social-2" href="<?php echo esc_url($instagram_url ? $instagram_url : '#'); ?>" aria-label="Instagram">
             <?php if ($instagram_icon_url) : ?>
               <img src="<?php echo esc_url($instagram_icon_url); ?>" alt="<?php echo esc_attr($instagram_icon_alt); ?>">
             <?php else : ?>
@@ -1589,6 +1599,17 @@ function yec_register_custom_blocks() {
         'default' => '',
       ],
       'imageAlt' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'mobileImageId' => [
+        'type' => 'number',
+      ],
+      'mobileImageUrl' => [
+        'type'    => 'string',
+        'default' => '',
+      ],
+      'mobileImageAlt' => [
         'type'    => 'string',
         'default' => '',
       ],

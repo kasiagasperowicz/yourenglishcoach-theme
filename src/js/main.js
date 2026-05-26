@@ -1,5 +1,27 @@
 import '../scss/main.scss';
 
+const siteHeader = document.querySelector('.yec-site-header');
+const navToggle = document.querySelector('.yec-nav-toggle');
+const mainNav = document.querySelector('.yec-main-nav');
+
+const closeMobileMenu = () => {
+	if (!siteHeader || !navToggle) {
+		return;
+	}
+
+	siteHeader.classList.remove('is-menu-open');
+	navToggle.setAttribute('aria-expanded', 'false');
+	navToggle.setAttribute('aria-label', 'Otworz menu');
+};
+
+if (siteHeader && navToggle && mainNav) {
+	navToggle.addEventListener('click', () => {
+		const isOpen = siteHeader.classList.toggle('is-menu-open');
+		navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+		navToggle.setAttribute('aria-label', isOpen ? 'Zamknij menu' : 'Otworz menu');
+	});
+}
+
 const parentMenuItems = document.querySelectorAll('.yec-main-menu .menu-item-has-children');
 
 parentMenuItems.forEach((item) => {
@@ -12,9 +34,17 @@ parentMenuItems.forEach((item) => {
 	trigger.setAttribute('aria-expanded', 'false');
 
 	trigger.addEventListener('click', (event) => {
-		event.preventDefault();
-
+		const href = (trigger.getAttribute('href') || '').trim();
+		const isPlaceholderHref = href === '' || href === '#';
+		const isDesktop = window.innerWidth > 860;
 		const isOpen = item.classList.contains('is-open');
+
+		// On desktop, first click opens submenu and second click navigates.
+		if (isDesktop && isOpen && !isPlaceholderHref) {
+			return;
+		}
+
+		event.preventDefault();
 
 		parentMenuItems.forEach((menuItem) => {
 			menuItem.classList.remove('is-open');
@@ -32,7 +62,7 @@ parentMenuItems.forEach((item) => {
 });
 
 document.addEventListener('click', (event) => {
-	if (event.target.closest('.yec-main-menu')) {
+	if (event.target.closest('.yec-main-menu') || event.target.closest('.yec-nav-toggle')) {
 		return;
 	}
 
@@ -43,6 +73,32 @@ document.addEventListener('click', (event) => {
 			trigger.setAttribute('aria-expanded', 'false');
 		}
 	});
+
+	closeMobileMenu();
+});
+
+document.addEventListener('keydown', (event) => {
+	if (event.key !== 'Escape') {
+		return;
+	}
+
+	closeMobileMenu();
+});
+
+if (mainNav) {
+	mainNav.querySelectorAll('a').forEach((link) => {
+		link.addEventListener('click', () => {
+			if (window.innerWidth <= 860 && !link.closest('.menu-item-has-children')) {
+				closeMobileMenu();
+			}
+		});
+	});
+}
+
+window.addEventListener('resize', () => {
+	if (window.innerWidth > 860) {
+		closeMobileMenu();
+	}
 });
 
 const reviewSections = document.querySelectorAll('.yec-google-reviews');
