@@ -38,7 +38,7 @@ body {
 .yec-site-header__inner {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 20px;
+  // padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -55,7 +55,7 @@ body {
   display: block;
   width: 120px !important;
   max-width: 120px !important;
-  max-height: 100px !important;
+  height: auto !important;
   object-fit: contain;
 }
 
@@ -94,7 +94,9 @@ body {
 @media (max-width: 860px) {
   .yec-site-header__inner {
     position: relative;
-    align-items: flex-start;
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .yec-nav-toggle {

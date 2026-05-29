@@ -16,6 +16,23 @@ function yec_theme_setup() {
 
 add_action('after_setup_theme', 'yec_theme_setup');
 
+// Serwuj logo w wyższej rozdzielczości (300px) dla ekranów Retina/HiDPI.
+// CSS nadal wyświetla w 120px, ale plik jest większy → ostry na 2×/3× DPI.
+add_filter('get_custom_logo', function ($html) {
+  $logo_id = get_theme_mod('custom_logo');
+  if (!$logo_id) {
+    return $html;
+  }
+  $image = wp_get_attachment_image($logo_id, [300, 300], false, [
+    'class' => 'custom-logo',
+    'alt'   => get_bloginfo('name'),
+  ]);
+  if (!$image) {
+    return $html;
+  }
+  return '<a href="' . esc_url(home_url('/')) . '" class="custom-logo-link" rel="home">' . $image . '</a>';
+});
+
 function yec_enqueue_assets() {
   $css_file = get_template_directory() . '/dist/assets/main.css';
   $js_file  = get_template_directory() . '/dist/js/main.js';
