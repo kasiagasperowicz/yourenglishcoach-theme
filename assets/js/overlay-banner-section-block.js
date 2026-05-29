@@ -27,16 +27,20 @@
       imageId: { type: 'number' },
       imageUrl: { type: 'string', default: '' },
       imageAlt: { type: 'string', default: '' },
+      mobileImageId: { type: 'number' },
+      mobileImageUrl: { type: 'string', default: '' },
+      mobileImageAlt: { type: 'string', default: '' },
       overlayColor: { type: 'string', default: '#000000' },
       overlayOpacity: { type: 'number', default: 35 },
       parallaxEnabled: { type: 'boolean', default: true },
       parallaxStrength: { type: 'number', default: 48 },
-      titlePrimary: { type: 'string', default: 'Ucz sie wygodnie online' },
+      titlePrimary: { type: 'string', default: 'Ucz się wygodnie online' },
       titlePrimarySize: { type: 'string', default: 'large' },
       titleSecondary: { type: 'string', default: 'Elastyczny plan dopasowany do Ciebie' },
       titleSecondarySize: { type: 'string', default: 'small' },
-      ctaText: { type: 'string', default: 'Umow konsultacje' },
+      ctaText: { type: 'string', default: 'Umów konsultację' },
       ctaUrl: { type: 'string', default: '/kontakt' },
+      anchorId: { type: 'string', default: '' },
       sectionSpaceTop: { type: 'number' },
       sectionSpaceBottom: { type: 'number' },
     },
@@ -73,6 +77,14 @@
         });
       };
 
+      var onSelectMobileImage = function (media) {
+        setAttributes({
+          mobileImageId: media && media.id ? media.id : undefined,
+          mobileImageUrl: media && media.url ? media.url : '',
+          mobileImageAlt: media && media.alt ? media.alt : '',
+        });
+      };
+
       return createElement(
         'section',
         blockProps,
@@ -82,7 +94,7 @@
           createElement(
             PanelBody,
             {
-              title: __('Ustawienia obrazu', 'yourenglishcoachtheme'),
+              title: __('Obraz — desktop', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(MediaUploadCheck, {},
@@ -94,7 +106,7 @@
                   return createElement(Button, {
                     variant: 'secondary',
                     onClick: renderProps.open,
-                  }, attributes.imageUrl ? __('Zmien obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
+                  }, attributes.imageUrl ? __('Zmień obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
                 },
               })
             ),
@@ -105,16 +117,46 @@
                   onClick: function () {
                     setAttributes({ imageId: undefined, imageUrl: '', imageAlt: '' });
                   },
-                }, __('Usun obraz', 'yourenglishcoachtheme'))
+                }, __('Usuń obraz', 'yourenglishcoachtheme'))
               : null
           ),
           createElement(
             PanelBody,
             {
-              title: __('Ustawienia overlay', 'yourenglishcoachtheme'),
+              title: __('Obraz — mobile (opcjonalnie)', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement('p', { style: { marginBottom: '8px', fontSize: '12px', color: '#757575' } }, __('Jeśli puste, używany jest obraz desktop.', 'yourenglishcoachtheme')),
+            createElement(MediaUploadCheck, {},
+              createElement(MediaUpload, {
+                onSelect: onSelectMobileImage,
+                allowedTypes: ['image'],
+                value: attributes.mobileImageId,
+                render: function (renderProps) {
+                  return createElement(Button, {
+                    variant: 'secondary',
+                    onClick: renderProps.open,
+                  }, attributes.mobileImageUrl ? __('Zmień obraz mobile', 'yourenglishcoachtheme') : __('Wybierz obraz mobile', 'yourenglishcoachtheme'));
+                },
+              })
+            ),
+            attributes.mobileImageUrl
+              ? createElement(Button, {
+                  variant: 'link',
+                  isDestructive: true,
+                  onClick: function () {
+                    setAttributes({ mobileImageId: undefined, mobileImageUrl: '', mobileImageAlt: '' });
+                  },
+                }, __('Usuń obraz mobile', 'yourenglishcoachtheme'))
+              : null
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Ustawienia nakładki', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
-            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor overlay', 'yourenglishcoachtheme')),
+            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor nakładki', 'yourenglishcoachtheme')),
             createElement(ColorPalette, {
               value: attributes.overlayColor || '#000000',
               onChange: function (value) {
@@ -122,7 +164,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Krycie overlay (%)', 'yourenglishcoachtheme'),
+              label: __('Krycie nakładki (%)', 'yourenglishcoachtheme'),
               min: 0,
               max: 100,
               value: overlayOpacity,
@@ -138,14 +180,14 @@
               initialOpen: true,
             },
             createElement(ToggleControl, {
-              label: __('Wlacz efekt parallax', 'yourenglishcoachtheme'),
+              label: __('Włącz efekt parallax', 'yourenglishcoachtheme'),
               checked: parallaxEnabled,
               onChange: function (value) {
                 setAttributes({ parallaxEnabled: !!value });
               },
             }),
             createElement(RangeControl, {
-              label: __('Sila efektu', 'yourenglishcoachtheme'),
+              label: __('Siła efektu', 'yourenglishcoachtheme'),
               min: 0,
               max: 120,
               value: parallaxStrength,
@@ -158,28 +200,28 @@
           createElement(
             PanelBody,
             {
-              title: __('Rozmiary tytulow', 'yourenglishcoachtheme'),
+              title: __('Rozmiary tytułów', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar pierwszego tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar pierwszego tytułu', 'yourenglishcoachtheme'),
               value: attributes.titlePrimarySize || 'large',
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titlePrimarySize: value || 'large' });
               },
             }),
             createElement(SelectControl, {
-              label: __('Rozmiar drugiego tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar drugiego tytułu', 'yourenglishcoachtheme'),
               value: attributes.titleSecondarySize || 'small',
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSecondarySize: value || 'small' });
@@ -210,11 +252,11 @@
           createElement(
             PanelBody,
             {
-              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              title: __('Odstępy sekcji', 'yourenglishcoachtheme'),
               initialOpen: false,
             },
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -223,12 +265,27 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
               onChange: function (value) {
                 setAttributes({ sectionSpaceBottom: value || 0 });
+              },
+            })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
               },
             })
           )
@@ -257,7 +314,7 @@
               tagName: 'h2',
               className: 'yec-overlay-banner__title-primary',
               value: attributes.titlePrimary,
-              placeholder: __('Pierwszy tytul', 'yourenglishcoachtheme'),
+              placeholder: __('Pierwszy tytuł', 'yourenglishcoachtheme'),
               onChange: function (value) {
                 setAttributes({ titlePrimary: value });
               },
@@ -266,7 +323,7 @@
               tagName: 'p',
               className: 'yec-overlay-banner__title-secondary',
               value: attributes.titleSecondary,
-              placeholder: __('Drugi tytul', 'yourenglishcoachtheme'),
+              placeholder: __('Drugi tytuł', 'yourenglishcoachtheme'),
               onChange: function (value) {
                 setAttributes({ titleSecondary: value });
               },
@@ -280,7 +337,7 @@
                   event.preventDefault();
                 },
               },
-              attributes.ctaText || __('Umow konsultacje', 'yourenglishcoachtheme')
+              attributes.ctaText || __('Umów konsultację', 'yourenglishcoachtheme')
             )
           )
         )

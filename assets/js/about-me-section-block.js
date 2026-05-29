@@ -12,7 +12,7 @@
   var __ = i18n.__;
 
   registerBlockType('yec/about-me-section', {
-    title: __('YEC Poznaj mnie blizej', 'yourenglishcoachtheme'),
+    title: __('YEC Poznaj mnie bliżej', 'yourenglishcoachtheme'),
     description: __('Sekcja 50/50: lewa kolumna (eyebrow + tytul), prawa kolumna (tekst + CTA).', 'yourenglishcoachtheme'),
     icon: 'id',
     category: 'design',
@@ -22,11 +22,11 @@
     attributes: {
       eyebrow: {
         type: 'string',
-        default: 'Poznaj mnie blizej',
+        default: 'Poznaj mnie bliżej',
       },
       title: {
         type: 'string',
-        default: 'Pomagam mowic po angielsku pewnie i naturalnie',
+        default: 'Pomagam mówić po angielsku pewnie i naturalnie',
       },
       titleSize: {
         type: 'string',
@@ -40,15 +40,19 @@
       },
       contentText: {
         type: 'string',
-        default: 'Tworze lekcje dopasowane do Twoich celow, tempa i stylu pracy. Skupiamy sie na praktyce, swobodzie mowienia i realnych efektach.',
+        default: 'Tworzę lekcje dopasowane do Twoich celów, tempa i stylu pracy. Skupiamy się na praktyce, swobodzie mówienia i realnych efektach.',
       },
       ctaText: {
         type: 'string',
-        default: 'Umow konsultacje',
+        default: 'Umów konsultację',
       },
       ctaUrl: {
         type: 'string',
         default: '/kontakt',
+      },
+      anchorId: {
+        type: 'string',
+        default: '',
       },
     },
     edit: function (props) {
@@ -78,16 +82,16 @@
           createElement(
             PanelBody,
             {
-              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              title: __('Ustawienia tytułu', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu', 'yourenglishcoachtheme'),
               value: titleSize,
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
@@ -97,11 +101,11 @@
           createElement(
             PanelBody,
             {
-              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              title: __('Odstępy sekcji', 'yourenglishcoachtheme'),
               initialOpen: false,
             },
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -110,7 +114,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -139,6 +143,21 @@
                 setAttributes({ ctaUrl: value });
               },
             })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
           )
         ),
         createElement(
@@ -148,7 +167,7 @@
             tagName: 'p',
             className: 'yec-about-me-section__eyebrow',
             value: attributes.eyebrow,
-            placeholder: __('Poznaj mnie blizej', 'yourenglishcoachtheme'),
+            placeholder: __('Poznaj mnie bliżej', 'yourenglishcoachtheme'),
             onChange: function (value) {
               setAttributes({ eyebrow: value });
             },
@@ -157,7 +176,7 @@
             tagName: 'h2',
             className: 'yec-about-me-section__title',
             value: attributes.title,
-            placeholder: __('Wpisz tytul sekcji', 'yourenglishcoachtheme'),
+            placeholder: __('Wpisz tytuł sekcji', 'yourenglishcoachtheme'),
             onChange: function (value) {
               setAttributes({ title: value });
             },
@@ -170,7 +189,7 @@
             tagName: 'p',
             className: 'yec-about-me-section__text',
             value: attributes.contentText,
-            placeholder: __('Wpisz tekst sekcji', 'yourenglishcoachtheme'),
+            placeholder: __('Wpisz treść sekcji', 'yourenglishcoachtheme'),
             onChange: function (value) {
               setAttributes({ contentText: value });
             },
@@ -190,7 +209,7 @@
                   event.preventDefault();
                 },
               },
-              attributes.ctaText || __('Umow konsultacje', 'yourenglishcoachtheme')
+              attributes.ctaText || __('Umów konsultację', 'yourenglishcoachtheme')
             )
           )
         )

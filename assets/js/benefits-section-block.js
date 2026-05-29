@@ -12,6 +12,7 @@
   var ColorPalette = components.ColorPalette;
   var SelectControl = components.SelectControl;
   var BaseControl = components.BaseControl;
+  var TextControl = components.TextControl;
   var createElement = element.createElement;
   var __ = i18n.__;
 
@@ -25,11 +26,11 @@
     },
     attributes: {
       eyebrow: { type: 'string', default: 'Co zyskujesz' },
-      title: { type: 'string', default: 'Dlaczego warto uczyc sie ze mna' },
+      title: { type: 'string', default: 'Dlaczego warto uczyć się ze mną' },
       titleSize: { type: 'string', default: 'medium' },
       sectionSpaceTop: { type: 'number' },
       sectionSpaceBottom: { type: 'number' },
-      subtitle: { type: 'string', default: 'Skupiamy sie na praktycznych efektach, ktore wykorzystasz od razu.' },
+      subtitle: { type: 'string', default: 'Skupiamy się na praktycznych efektach, które wykorzystasz od razu.' },
       hasBackground: { type: 'boolean', default: false },
       backgroundColor: { type: 'string', default: '#F7EEF2' },
       item1Icon: { type: 'string', default: '🎯' },
@@ -41,17 +42,21 @@
       item2IconImageId: { type: 'number' },
       item2IconImageUrl: { type: 'string', default: '' },
       item2IconImageAlt: { type: 'string', default: '' },
-      item2Title: { type: 'string', default: 'Wieksza swoboda w mowieniu' },
+      item2Title: { type: 'string', default: 'Większa swoboda w mówieniu' },
       item3Icon: { type: 'string', default: '📈' },
       item3IconImageId: { type: 'number' },
       item3IconImageUrl: { type: 'string', default: '' },
       item3IconImageAlt: { type: 'string', default: '' },
-      item3Title: { type: 'string', default: 'Widoczne postepy tydzien po tygodniu' },
+      item3Title: { type: 'string', default: 'Widoczne postępy tydzień po tygodniu' },
       item4Icon: { type: 'string', default: '💼' },
       item4IconImageId: { type: 'number' },
       item4IconImageUrl: { type: 'string', default: '' },
       item4IconImageAlt: { type: 'string', default: '' },
-      item4Title: { type: 'string', default: 'Przygotowanie do pracy i egzaminow' },
+      item4Title: { type: 'string', default: 'Przygotowanie do pracy i egzaminów' },
+      anchorId: {
+        type: 'string',
+        default: '',
+      },
     },
     edit: function (props) {
       var attributes = props.attributes;
@@ -91,11 +96,11 @@
           createElement(
             PanelBody,
             {
-              title: __('Tlo sekcji', 'yourenglishcoachtheme'),
+              title: __('Tło sekcji', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(ToggleControl, {
-              label: __('Wlacz tlo na cala szerokosc', 'yourenglishcoachtheme'),
+              label: __('Włącz tło na całą szerokość', 'yourenglishcoachtheme'),
               checked: !!attributes.hasBackground,
               onChange: function (value) {
                 setAttributes({ hasBackground: value });
@@ -104,7 +109,7 @@
             attributes.hasBackground
               ? createElement(
                   BaseControl,
-                  { label: __('Kolor tla', 'yourenglishcoachtheme') },
+                  { label: __('Kolor tła', 'yourenglishcoachtheme') },
                   createElement(ColorPalette, {
                     value: attributes.backgroundColor || '#F7EEF2',
                     onChange: function (value) {
@@ -117,11 +122,11 @@
           createElement(
             PanelBody,
             {
-              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              title: __('Odstępy sekcji', 'yourenglishcoachtheme'),
               initialOpen: false,
             },
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -130,7 +135,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -142,16 +147,16 @@
           createElement(
             PanelBody,
             {
-              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              title: __('Ustawienia tytułu', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu', 'yourenglishcoachtheme'),
               value: titleSize,
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
@@ -181,7 +186,7 @@
                     return createElement(Button, {
                       variant: 'secondary',
                       onClick: renderProps.open,
-                    }, attributes[card.imageUrlKey] ? __('Zmien ikone (SVG/obraz)', 'yourenglishcoachtheme') : __('Wybierz ikone (SVG/obraz)', 'yourenglishcoachtheme'));
+                    }, attributes[card.imageUrlKey] ? __('Zmień ikonę (SVG/obraz)', 'yourenglishcoachtheme') : __('Wybierz ikonę (SVG/obraz)', 'yourenglishcoachtheme'));
                   },
                 })
               ),
@@ -196,10 +201,25 @@
                       update[card.imageAltKey] = '';
                       setAttributes(update);
                     },
-                  }, __('Usun ikone obrazkowa', 'yourenglishcoachtheme'))
+                  }, __('Usuń ikonę obrazkową', 'yourenglishcoachtheme'))
                 : null
             );
-          })
+          }),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
+          )
         ),
         createElement(
           'div',
@@ -215,14 +235,14 @@
             tagName: 'h2',
             className: 'yec-benefits-section__title',
             value: attributes.title,
-            placeholder: __('Dlaczego warto uczyc sie ze mna', 'yourenglishcoachtheme'),
+            placeholder: __('Dlaczego warto uczyć się ze mną', 'yourenglishcoachtheme'),
             onChange: function (value) { setAttributes({ title: value }); },
           }),
           createElement(RichText, {
             tagName: 'p',
             className: 'yec-benefits-section__subtitle',
             value: attributes.subtitle,
-            placeholder: __('Krotkie wprowadzenie do korzysci.', 'yourenglishcoachtheme'),
+            placeholder: __('Krótkie wprowadzenie do korzyści.', 'yourenglishcoachtheme'),
             onChange: function (value) { setAttributes({ subtitle: value }); },
           })
         ),

@@ -9,11 +9,12 @@
   var SelectControl = components.SelectControl;
   var RangeControl = components.RangeControl;
   var Button = components.Button;
+  var TextControl = components.TextControl;
   var createElement = element.createElement;
   var __ = i18n.__;
 
   registerBlockType('yec/learning-options-section', {
-    title: __('YEC Jak mozesz uczyc sie ze mna', 'yourenglishcoachtheme'),
+    title: __('YEC Jak możesz uczyć się ze mną', 'yourenglishcoachtheme'),
     description: __('Sekcja z tytulem i trzema kafelkami: tytul, tresc i zdjecie.', 'yourenglishcoachtheme'),
     icon: 'welcome-learn-more',
     category: 'design',
@@ -21,25 +22,38 @@
       html: false,
     },
     attributes: {
-      sectionTitle: { type: 'string', default: 'Jak mozesz uczyc sie ze mna' },
+      sectionTitle: { type: 'string', default: 'Jak możesz uczyć się ze mną' },
       titleSize: { type: 'string', default: 'medium' },
       sectionSpaceTop: { type: 'number' },
       sectionSpaceBottom: { type: 'number' },
       card1Title: { type: 'string', default: 'Lekcje indywidualne' },
-      card1Text: { type: 'string', default: 'Spotkania 1:1 dopasowane do Twoich celow i tempa pracy.' },
+      card1Text: { type: 'string', default: 'Spotkania 1:1 dopasowane do Twoich celów i tempa pracy.' },
       card1ImageId: { type: 'number' },
       card1ImageUrl: { type: 'string', default: '' },
       card1ImageAlt: { type: 'string', default: '' },
+      card1MobileImageId: { type: 'number' },
+      card1MobileImageUrl: { type: 'string', default: '' },
+      card1MobileImageAlt: { type: 'string', default: '' },
       card2Title: { type: 'string', default: 'Konwersacje tematyczne' },
-      card2Text: { type: 'string', default: 'Praktyczne rozmowy, ktore pomagaja swobodnie mowic po angielsku.' },
+      card2Text: { type: 'string', default: 'Praktyczne rozmowy, które pomagają swobodnie mówić po angielsku.' },
       card2ImageId: { type: 'number' },
       card2ImageUrl: { type: 'string', default: '' },
       card2ImageAlt: { type: 'string', default: '' },
-      card3Title: { type: 'string', default: 'Wsparcie do egzaminow' },
-      card3Text: { type: 'string', default: 'Materialy i plan nauki skoncentrowane na Twoim wyniku.' },
+      card2MobileImageId: { type: 'number' },
+      card2MobileImageUrl: { type: 'string', default: '' },
+      card2MobileImageAlt: { type: 'string', default: '' },
+      card3Title: { type: 'string', default: 'Wsparcie do egzaminów' },
+      card3Text: { type: 'string', default: 'Materiały i plan nauki skoncentrowane na Twoim wyniku.' },
       card3ImageId: { type: 'number' },
       card3ImageUrl: { type: 'string', default: '' },
       card3ImageAlt: { type: 'string', default: '' },
+      card3MobileImageId: { type: 'number' },
+      card3MobileImageUrl: { type: 'string', default: '' },
+      card3MobileImageAlt: { type: 'string', default: '' },
+      anchorId: {
+        type: 'string',
+        default: '',
+      },
     },
     edit: function (props) {
       var attributes = props.attributes;
@@ -60,9 +74,9 @@
       });
 
       var cards = [
-        { titleKey: 'card1Title', textKey: 'card1Text', imageIdKey: 'card1ImageId', imageUrlKey: 'card1ImageUrl', imageAltKey: 'card1ImageAlt' },
-        { titleKey: 'card2Title', textKey: 'card2Text', imageIdKey: 'card2ImageId', imageUrlKey: 'card2ImageUrl', imageAltKey: 'card2ImageAlt' },
-        { titleKey: 'card3Title', textKey: 'card3Text', imageIdKey: 'card3ImageId', imageUrlKey: 'card3ImageUrl', imageAltKey: 'card3ImageAlt' },
+        { titleKey: 'card1Title', textKey: 'card1Text', imageIdKey: 'card1ImageId', imageUrlKey: 'card1ImageUrl', imageAltKey: 'card1ImageAlt', mobileImageIdKey: 'card1MobileImageId', mobileImageUrlKey: 'card1MobileImageUrl', mobileImageAltKey: 'card1MobileImageAlt' },
+        { titleKey: 'card2Title', textKey: 'card2Text', imageIdKey: 'card2ImageId', imageUrlKey: 'card2ImageUrl', imageAltKey: 'card2ImageAlt', mobileImageIdKey: 'card2MobileImageId', mobileImageUrlKey: 'card2MobileImageUrl', mobileImageAltKey: 'card2MobileImageAlt' },
+        { titleKey: 'card3Title', textKey: 'card3Text', imageIdKey: 'card3ImageId', imageUrlKey: 'card3ImageUrl', imageAltKey: 'card3ImageAlt', mobileImageIdKey: 'card3MobileImageId', mobileImageUrlKey: 'card3MobileImageUrl', mobileImageAltKey: 'card3MobileImageAlt' },
       ];
 
       return createElement(
@@ -74,11 +88,11 @@
           createElement(
             PanelBody,
             {
-              title: __('Odstepy sekcji', 'yourenglishcoachtheme'),
+              title: __('Odstępy sekcji', 'yourenglishcoachtheme'),
               initialOpen: false,
             },
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -87,7 +101,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -99,16 +113,16 @@
           createElement(
             PanelBody,
             {
-              title: __('Ustawienia tytulu', 'yourenglishcoachtheme'),
+              title: __('Ustawienia tytułu', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu', 'yourenglishcoachtheme'),
               value: titleSize,
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
@@ -119,10 +133,11 @@
             return createElement(
               PanelBody,
               {
-                title: __('Zdjecie kafelka ', 'yourenglishcoachtheme') + (index + 1),
+                title: __('Zdjęcie kafelka ', 'yourenglishcoachtheme') + (index + 1),
                 initialOpen: false,
                 key: 'learning-image-panel-' + index,
               },
+              createElement('p', { style: { margin: '0 0 6px', fontWeight: 600, fontSize: '12px' } }, __('Zdjęcie desktop', 'yourenglishcoachtheme')),
               createElement(MediaUploadCheck, {},
                 createElement(MediaUpload, {
                   onSelect: function (media) {
@@ -138,7 +153,7 @@
                     return createElement(Button, {
                       variant: 'secondary',
                       onClick: renderProps.open,
-                    }, attributes[card.imageUrlKey] ? __('Zmien zdjecie', 'yourenglishcoachtheme') : __('Wybierz zdjecie', 'yourenglishcoachtheme'));
+                    }, attributes[card.imageUrlKey] ? __('Zmień zdjęcie', 'yourenglishcoachtheme') : __('Wybierz zdjęcie', 'yourenglishcoachtheme'));
                   },
                 })
               ),
@@ -153,16 +168,64 @@
                       update[card.imageAltKey] = '';
                       setAttributes(update);
                     },
-                  }, __('Usun zdjecie', 'yourenglishcoachtheme'))
+                  }, __('Usuń zdjęcie', 'yourenglishcoachtheme'))
+                : null,
+              createElement('p', { style: { margin: '12px 0 4px', fontSize: '12px', color: '#757575' } }, __('Zdjęcie mobile (opcjonalnie — fallback: desktop)', 'yourenglishcoachtheme')),
+              createElement(MediaUploadCheck, {},
+                createElement(MediaUpload, {
+                  onSelect: function (media) {
+                    var update = {};
+                    update[card.mobileImageIdKey] = media && media.id ? media.id : undefined;
+                    update[card.mobileImageUrlKey] = media && media.url ? media.url : '';
+                    update[card.mobileImageAltKey] = media && media.alt ? media.alt : '';
+                    setAttributes(update);
+                  },
+                  allowedTypes: ['image'],
+                  value: attributes[card.mobileImageIdKey],
+                  render: function (renderProps) {
+                    return createElement(Button, {
+                      variant: 'secondary',
+                      onClick: renderProps.open,
+                    }, attributes[card.mobileImageUrlKey] ? __('Zmień zdjęcie mobile', 'yourenglishcoachtheme') : __('Wybierz zdjęcie mobile', 'yourenglishcoachtheme'));
+                  },
+                })
+              ),
+              attributes[card.mobileImageUrlKey]
+                ? createElement(Button, {
+                    variant: 'link',
+                    isDestructive: true,
+                    onClick: function () {
+                      var update = {};
+                      update[card.mobileImageIdKey] = undefined;
+                      update[card.mobileImageUrlKey] = '';
+                      update[card.mobileImageAltKey] = '';
+                      setAttributes(update);
+                    },
+                  }, __('Usuń zdjęcie mobile', 'yourenglishcoachtheme'))
                 : null
             );
-          })
+          }),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
+          )
         ),
         createElement(RichText, {
           tagName: 'h2',
           className: 'yec-learning-section__title',
           value: attributes.sectionTitle,
-          placeholder: __('Jak mozesz uczyc sie ze mna', 'yourenglishcoachtheme'),
+          placeholder: __('Jak możesz uczyć się ze mną', 'yourenglishcoachtheme'),
           onChange: function (value) {
             setAttributes({ sectionTitle: value });
           },
@@ -178,7 +241,7 @@
                 tagName: 'h3',
                 className: 'yec-learning-section__card-title',
                 value: attributes[card.titleKey],
-                placeholder: __('Tytul kafelka', 'yourenglishcoachtheme'),
+                placeholder: __('Tytuł kafelka', 'yourenglishcoachtheme'),
                 onChange: function (value) {
                   var update = {};
                   update[card.titleKey] = value;
@@ -189,7 +252,7 @@
                 tagName: 'p',
                 className: 'yec-learning-section__card-text',
                 value: attributes[card.textKey],
-                placeholder: __('Tresc kafelka', 'yourenglishcoachtheme'),
+                placeholder: __('Treść kafelka', 'yourenglishcoachtheme'),
                 onChange: function (value) {
                   var update = {};
                   update[card.textKey] = value;

@@ -65,14 +65,25 @@
         type: 'string',
         default: '',
       },
+      mobileBackgroundImageId: {
+        type: 'number',
+      },
+      mobileBackgroundImageUrl: {
+        type: 'string',
+        default: '',
+      },
       cards: {
         type: 'array',
         default: [
-          { photoUrl: '', photoAlt: '', stars: 5, text: 'Swietna atmosfera i bardzo praktyczne lekcje.', author: 'Anna', reviewUrl: '' },
-          { photoUrl: '', photoAlt: '', stars: 5, text: 'Widze postepy po kazdym tygodniu nauki.', author: 'Kasia', reviewUrl: '' },
-          { photoUrl: '', photoAlt: '', stars: 5, text: 'Duza pewnosc siebie w mowieniu po zajeciach.', author: 'Michal', reviewUrl: '' },
+          { photoUrl: '', photoAlt: '', stars: 5, text: 'Świetna atmosfera i bardzo praktyczne lekcje.', author: 'Anna', reviewUrl: '' },
+          { photoUrl: '', photoAlt: '', stars: 5, text: 'Widzę postępy po każdym tygodniu nauki.', author: 'Kasia', reviewUrl: '' },
+          { photoUrl: '', photoAlt: '', stars: 5, text: 'Duża pewność siebie w mówieniu po zajęciach.', author: 'Michał', reviewUrl: '' },
           { photoUrl: '', photoAlt: '', stars: 5, text: 'Profesjonalnie, konkretnie i z sercem.', author: 'Ewa', reviewUrl: '' },
         ],
+      },
+      anchorId: {
+        type: 'string',
+        default: '',
       },
     },
     edit: function (props) {
@@ -87,6 +98,8 @@
       var backgroundColor = attributes.backgroundColor || '#F7EEF2';
       var backgroundImageId = attributes.backgroundImageId;
       var backgroundImageUrl = attributes.backgroundImageUrl || '';
+      var mobileBackgroundImageId = attributes.mobileBackgroundImageId;
+      var mobileBackgroundImageUrl = attributes.mobileBackgroundImageUrl || '';
       var sectionStyle = {};
       if (hasBackground) {
         sectionStyle['--yec-google-reviews-bg-color'] = backgroundColor;
@@ -130,7 +143,7 @@
           createElement(
             PanelBody,
             {
-              title: __('Tlo sekcji', 'yourenglishcoachtheme'),
+              title: __('Tło sekcji', 'yourenglishcoachtheme'),
               initialOpen: true,
             },
             createElement(TextControl, {
@@ -141,19 +154,19 @@
               },
             }),
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu', 'yourenglishcoachtheme'),
               value: titleSize,
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -162,7 +175,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -171,7 +184,7 @@
               },
             }),
             createElement(ToggleControl, {
-              label: __('Wlacz tlo sekcji', 'yourenglishcoachtheme'),
+              label: __('Włącz tło sekcji', 'yourenglishcoachtheme'),
               checked: hasBackground,
               onChange: function (value) {
                 setAttributes({ hasBackground: !!value });
@@ -181,7 +194,7 @@
               ? createElement(
                   'div',
                   { style: { marginBottom: '16px' } },
-                  createElement('p', { style: { marginBottom: '8px' } }, __('Kolor tla', 'yourenglishcoachtheme')),
+                  createElement('p', { style: { marginBottom: '8px' } }, __('Kolor tła', 'yourenglishcoachtheme')),
                   createElement(ColorPalette, {
                     value: backgroundColor,
                     onChange: function (value) {
@@ -191,33 +204,67 @@
                 )
               : null,
             hasBackground
-              ? createElement(MediaUploadCheck, {},
-                  createElement(MediaUpload, {
-                    onSelect: function (media) {
-                      setAttributes({
-                        backgroundImageId: media && media.id ? media.id : undefined,
-                        backgroundImageUrl: media && media.url ? media.url : '',
-                      });
-                    },
-                    allowedTypes: ['image'],
-                    value: backgroundImageId,
-                    render: function (renderProps) {
-                      return createElement(Button, {
-                        variant: 'secondary',
-                        onClick: renderProps.open,
-                      }, backgroundImageUrl ? __('Zmien obraz tla', 'yourenglishcoachtheme') : __('Wybierz obraz tla (opcjonalnie)', 'yourenglishcoachtheme'));
-                    },
-                  })
+              ? createElement(
+                  'div',
+                  null,
+                  createElement('p', { style: { marginBottom: '6px', fontWeight: 600, fontSize: '12px' } }, __('Obraz tła — desktop', 'yourenglishcoachtheme')),
+                  createElement(MediaUploadCheck, {},
+                    createElement(MediaUpload, {
+                      onSelect: function (media) {
+                        setAttributes({
+                          backgroundImageId: media && media.id ? media.id : undefined,
+                          backgroundImageUrl: media && media.url ? media.url : '',
+                        });
+                      },
+                      allowedTypes: ['image'],
+                      value: backgroundImageId,
+                      render: function (renderProps) {
+                        return createElement(Button, {
+                          variant: 'secondary',
+                          onClick: renderProps.open,
+                        }, backgroundImageUrl ? __('Zmień obraz tła', 'yourenglishcoachtheme') : __('Wybierz obraz tła (opcjonalnie)', 'yourenglishcoachtheme'));
+                      },
+                    })
+                  ),
+                  backgroundImageUrl
+                    ? createElement(Button, {
+                        variant: 'link',
+                        isDestructive: true,
+                        onClick: function () {
+                          setAttributes({ backgroundImageId: undefined, backgroundImageUrl: '' });
+                        },
+                      }, __('Usuń obraz tła', 'yourenglishcoachtheme'))
+                    : null,
+                  createElement('p', { style: { margin: '12px 0 6px', fontWeight: 600, fontSize: '12px' } }, __('Obraz tła — mobile (opcjonalnie)', 'yourenglishcoachtheme')),
+                  createElement('p', { style: { marginBottom: '8px', fontSize: '12px', color: '#757575' } }, __('Jeśli puste, używany jest obraz desktop.', 'yourenglishcoachtheme')),
+                  createElement(MediaUploadCheck, {},
+                    createElement(MediaUpload, {
+                      onSelect: function (media) {
+                        setAttributes({
+                          mobileBackgroundImageId: media && media.id ? media.id : undefined,
+                          mobileBackgroundImageUrl: media && media.url ? media.url : '',
+                        });
+                      },
+                      allowedTypes: ['image'],
+                      value: mobileBackgroundImageId,
+                      render: function (renderProps) {
+                        return createElement(Button, {
+                          variant: 'secondary',
+                          onClick: renderProps.open,
+                        }, mobileBackgroundImageUrl ? __('Zmień obraz tła mobile', 'yourenglishcoachtheme') : __('Wybierz obraz tła mobile', 'yourenglishcoachtheme'));
+                      },
+                    })
+                  ),
+                  mobileBackgroundImageUrl
+                    ? createElement(Button, {
+                        variant: 'link',
+                        isDestructive: true,
+                        onClick: function () {
+                          setAttributes({ mobileBackgroundImageId: undefined, mobileBackgroundImageUrl: '' });
+                        },
+                      }, __('Usuń obraz tła mobile', 'yourenglishcoachtheme'))
+                    : null
                 )
-              : null,
-            hasBackground && backgroundImageUrl
-              ? createElement(Button, {
-                  variant: 'link',
-                  isDestructive: true,
-                  onClick: function () {
-                    setAttributes({ backgroundImageId: undefined, backgroundImageUrl: '' });
-                  },
-                }, __('Usun obraz tla', 'yourenglishcoachtheme'))
               : null
           ),
           createElement(
@@ -249,7 +296,7 @@
                       return createElement(Button, {
                         variant: 'secondary',
                         onClick: renderProps.open,
-                      }, card.photoUrl ? __('Zmien zdjecie', 'yourenglishcoachtheme') : __('Wybierz zdjecie', 'yourenglishcoachtheme'));
+                      }, card.photoUrl ? __('Zmień zdjęcie', 'yourenglishcoachtheme') : __('Wybierz zdjęcie', 'yourenglishcoachtheme'));
                     },
                   })
                 ),
@@ -260,7 +307,7 @@
                       onClick: function () {
                         updateCard(index, { photoId: undefined, photoUrl: '', photoAlt: '' });
                       },
-                    }, __('Usun zdjecie', 'yourenglishcoachtheme'))
+                    }, __('Usuń zdjęcie', 'yourenglishcoachtheme'))
                   : null,
                 createElement(RangeControl, {
                   label: __('Liczba gwiazdek', 'yourenglishcoachtheme'),
@@ -298,6 +345,21 @@
               variant: 'primary',
               onClick: addCard,
             }, __('Dodaj kafelek opinii', 'yourenglishcoachtheme'))
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
           )
         ),
         sectionTitle

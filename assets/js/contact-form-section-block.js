@@ -22,9 +22,9 @@
       html: false,
     },
     attributes: {
-      sectionTitle: { type: 'string', default: 'Skontaktuj sie' },
+      sectionTitle: { type: 'string', default: 'Skontaktuj się' },
       titleSize: { type: 'string', default: 'medium' },
-      contentText: { type: 'string', default: 'Napisz lub zadzwon - odpowiem najszybciej, jak to mozliwe.' },
+      contentText: { type: 'string', default: 'Napisz lub zadzwoń - odpowiem najszybciej, jak to możliwe.' },
       phone: { type: 'string', default: '+48 000 000 000' },
       email: { type: 'string', default: 'kontakt@twojadomena.pl' },
       address: { type: 'string', default: 'Poznan, Polska' },
@@ -38,6 +38,7 @@
       instagramIconAlt: { type: 'string', default: 'Instagram' },
       formTitle: { type: 'string', default: 'Napisz wiadomosc' },
       ctaText: { type: 'string', default: 'Wyslij wiadomosc' },
+      anchorId: { type: 'string', default: '' },
       sectionSpaceTop: { type: 'number' },
       sectionSpaceBottom: { type: 'number' },
     },
@@ -80,19 +81,19 @@
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu', 'yourenglishcoachtheme'),
               value: attributes.titleSize || 'medium',
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -101,7 +102,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -203,6 +204,21 @@
                 },
               })
             )
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
           )
         ),
         createElement(
@@ -215,7 +231,7 @@
               tagName: 'h2',
               className: 'yec-contact-form__title',
               value: attributes.sectionTitle,
-              placeholder: __('Tytul sekcji', 'yourenglishcoachtheme'),
+              placeholder: __('Tytuł sekcji', 'yourenglishcoachtheme'),
               onChange: function (value) {
                 setAttributes({ sectionTitle: value });
               },

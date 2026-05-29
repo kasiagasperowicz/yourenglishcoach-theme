@@ -31,7 +31,10 @@
       card1ImageId: { type: 'number' },
       card1ImageUrl: { type: 'string', default: '' },
       card1ImageAlt: { type: 'string', default: '' },
-      card1Text: { type: 'string', default: 'Dla doroslych' },
+      card1MobileImageId: { type: 'number' },
+      card1MobileImageUrl: { type: 'string', default: '' },
+      card1MobileImageAlt: { type: 'string', default: '' },
+      card1Text: { type: 'string', default: 'Dla dorosłych' },
       card1Url: { type: 'string', default: '/dla-doroslych' },
       card1OverlayColor: { type: 'string', default: '#000000' },
       card1OverlayOpacity: { type: 'number', default: 35 },
@@ -39,10 +42,17 @@
       card2ImageId: { type: 'number' },
       card2ImageUrl: { type: 'string', default: '' },
       card2ImageAlt: { type: 'string', default: '' },
-      card2Text: { type: 'string', default: 'Dla mlodziezy' },
+      card2MobileImageId: { type: 'number' },
+      card2MobileImageUrl: { type: 'string', default: '' },
+      card2MobileImageAlt: { type: 'string', default: '' },
+      card2Text: { type: 'string', default: 'Dla młodzieży' },
       card2Url: { type: 'string', default: '/dla-mlodziezy' },
       card2OverlayColor: { type: 'string', default: '#000000' },
       card2OverlayOpacity: { type: 'number', default: 35 },
+      anchorId: {
+        type: 'string',
+        default: '',
+      },
     },
     edit: function (props) {
       var attributes = props.attributes;
@@ -96,19 +106,19 @@
               initialOpen: true,
             },
             createElement(SelectControl, {
-              label: __('Rozmiar tytulu i tekstow na obrazach', 'yourenglishcoachtheme'),
+              label: __('Rozmiar tytułu i tekstów na obrazach', 'yourenglishcoachtheme'),
               value: attributes.titleSize || 'medium',
               options: [
-                { label: __('Duzy', 'yourenglishcoachtheme'), value: 'large' },
-                { label: __('Sredni', 'yourenglishcoachtheme'), value: 'medium' },
-                { label: __('Maly', 'yourenglishcoachtheme'), value: 'small' },
+                { label: __('Duży', 'yourenglishcoachtheme'), value: 'large' },
+                { label: __('Średni', 'yourenglishcoachtheme'), value: 'medium' },
+                { label: __('Mały', 'yourenglishcoachtheme'), value: 'small' },
               ],
               onChange: function (value) {
                 setAttributes({ titleSize: value || 'medium' });
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -117,7 +127,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -133,13 +143,25 @@
               initialOpen: true,
             },
             renderImageButton(
-              attributes.card1ImageUrl ? __('Zmien obraz 1', 'yourenglishcoachtheme') : __('Wybierz obraz 1', 'yourenglishcoachtheme'),
+              attributes.card1ImageUrl ? __('Zmień obraz 1 (desktop)', 'yourenglishcoachtheme') : __('Wybierz obraz 1 (desktop)', 'yourenglishcoachtheme'),
               attributes.card1ImageId,
               function (media) {
                 setAttributes({
                   card1ImageId: media && media.id ? media.id : undefined,
                   card1ImageUrl: media && media.url ? media.url : '',
                   card1ImageAlt: media && media.alt ? media.alt : '',
+                });
+              }
+            ),
+            createElement('p', { style: { margin: '8px 0 4px', fontSize: '12px', color: '#757575' } }, __('Obraz mobile (opcjonalnie — fallback: desktop)', 'yourenglishcoachtheme')),
+            renderImageButton(
+              attributes.card1MobileImageUrl ? __('Zmień obraz 1 (mobile)', 'yourenglishcoachtheme') : __('Wybierz obraz 1 (mobile)', 'yourenglishcoachtheme'),
+              attributes.card1MobileImageId,
+              function (media) {
+                setAttributes({
+                  card1MobileImageId: media && media.id ? media.id : undefined,
+                  card1MobileImageUrl: media && media.url ? media.url : '',
+                  card1MobileImageAlt: media && media.alt ? media.alt : '',
                 });
               }
             ),
@@ -150,7 +172,7 @@
                 setAttributes({ card1Url: value });
               },
             }),
-            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor overlay kafla 1', 'yourenglishcoachtheme')),
+            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor nakładki kafla 1', 'yourenglishcoachtheme')),
             createElement(ColorPalette, {
               value: attributes.card1OverlayColor || '#000000',
               onChange: function (value) {
@@ -158,7 +180,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Krycie overlay 1 (%)', 'yourenglishcoachtheme'),
+              label: __('Krycie nakładki 1 (%)', 'yourenglishcoachtheme'),
               min: 0,
               max: 100,
               value: card1OverlayOpacity,
@@ -174,13 +196,25 @@
               initialOpen: false,
             },
             renderImageButton(
-              attributes.card2ImageUrl ? __('Zmien obraz 2', 'yourenglishcoachtheme') : __('Wybierz obraz 2', 'yourenglishcoachtheme'),
+              attributes.card2ImageUrl ? __('Zmień obraz 2 (desktop)', 'yourenglishcoachtheme') : __('Wybierz obraz 2 (desktop)', 'yourenglishcoachtheme'),
               attributes.card2ImageId,
               function (media) {
                 setAttributes({
                   card2ImageId: media && media.id ? media.id : undefined,
                   card2ImageUrl: media && media.url ? media.url : '',
                   card2ImageAlt: media && media.alt ? media.alt : '',
+                });
+              }
+            ),
+            createElement('p', { style: { margin: '8px 0 4px', fontSize: '12px', color: '#757575' } }, __('Obraz mobile (opcjonalnie — fallback: desktop)', 'yourenglishcoachtheme')),
+            renderImageButton(
+              attributes.card2MobileImageUrl ? __('Zmień obraz 2 (mobile)', 'yourenglishcoachtheme') : __('Wybierz obraz 2 (mobile)', 'yourenglishcoachtheme'),
+              attributes.card2MobileImageId,
+              function (media) {
+                setAttributes({
+                  card2MobileImageId: media && media.id ? media.id : undefined,
+                  card2MobileImageUrl: media && media.url ? media.url : '',
+                  card2MobileImageAlt: media && media.alt ? media.alt : '',
                 });
               }
             ),
@@ -191,7 +225,7 @@
                 setAttributes({ card2Url: value });
               },
             }),
-            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor overlay kafla 2', 'yourenglishcoachtheme')),
+            createElement('p', { style: { marginBottom: '8px' } }, __('Kolor nakładki kafla 2', 'yourenglishcoachtheme')),
             createElement(ColorPalette, {
               value: attributes.card2OverlayColor || '#000000',
               onChange: function (value) {
@@ -199,12 +233,27 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Krycie overlay 2 (%)', 'yourenglishcoachtheme'),
+              label: __('Krycie nakładki 2 (%)', 'yourenglishcoachtheme'),
               min: 0,
               max: 100,
               value: card2OverlayOpacity,
               onChange: function (value) {
                 setAttributes({ card2OverlayOpacity: value || 0 });
+              },
+            })
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
               },
             })
           )
@@ -213,7 +262,7 @@
           tagName: 'h2',
           className: 'yec-for-whom__title',
           value: attributes.sectionTitle,
-          placeholder: __('Tytul sekcji', 'yourenglishcoachtheme'),
+          placeholder: __('Tytuł sekcji', 'yourenglishcoachtheme'),
           onChange: function (value) {
             setAttributes({ sectionTitle: value });
           },

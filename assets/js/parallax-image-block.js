@@ -8,6 +8,7 @@
   var Button = components.Button;
   var ToggleControl = components.ToggleControl;
   var RangeControl = components.RangeControl;
+  var TextControl = components.TextControl;
   var createElement = element.createElement;
   var Fragment = element.Fragment;
   var __ = i18n.__;
@@ -56,6 +57,10 @@
       },
       sectionSpaceBottom: {
         type: 'number',
+      },
+      anchorId: {
+        type: 'string',
+        default: '',
       },
     },
     edit: function (props) {
@@ -117,7 +122,7 @@
                 return createElement(Button, {
                   variant: 'secondary',
                   onClick: renderProps.open,
-                }, currentImageUrl ? __('Zmien obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
+                }, currentImageUrl ? __('Zmień obraz', 'yourenglishcoachtheme') : __('Wybierz obraz', 'yourenglishcoachtheme'));
               },
             })
           ),
@@ -127,7 +132,7 @@
                 isDestructive: true,
                 onClick: onClear,
                 style: { display: 'block', marginTop: '6px' },
-              }, __('Usun obraz', 'yourenglishcoachtheme'))
+              }, __('Usuń obraz', 'yourenglishcoachtheme'))
             : null
         );
       };
@@ -145,14 +150,14 @@
               initialOpen: true,
             },
             createElement(ToggleControl, {
-              label: __('Wlacz efekt parallax', 'yourenglishcoachtheme'),
+              label: __('Włącz efekt parallax', 'yourenglishcoachtheme'),
               checked: parallaxEnabled,
               onChange: function (value) {
                 setAttributes({ parallaxEnabled: !!value });
               },
             }),
             createElement(RangeControl, {
-              label: __('Sila efektu', 'yourenglishcoachtheme'),
+              label: __('Siła efektu', 'yourenglishcoachtheme'),
               min: 0,
               max: 120,
               value: parallaxStrength,
@@ -162,7 +167,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen nad sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń nad sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceTop,
@@ -171,7 +176,7 @@
               },
             }),
             createElement(RangeControl, {
-              label: __('Przestrzen pod sekcja (px)', 'yourenglishcoachtheme'),
+              label: __('Przestrzeń pod sekcją (px)', 'yourenglishcoachtheme'),
               min: 0,
               max: 240,
               value: sectionSpaceBottom,
@@ -187,7 +192,7 @@
               initialOpen: false,
             },
             renderImageControl(
-              __('Obraz desktopowy', 'yourenglishcoachtheme'),
+              __('Obraz — desktop', 'yourenglishcoachtheme'),
               imageUrl,
               imageAlt,
               imageId,
@@ -203,7 +208,7 @@
               }
             ),
             renderImageControl(
-              __('Obraz mobilny', 'yourenglishcoachtheme'),
+              __('Obraz — mobile (opcjonalnie)', 'yourenglishcoachtheme'),
               mobileImageUrl,
               mobileImageAlt,
               mobileImageId,
@@ -218,6 +223,21 @@
                 setAttributes({ mobileImageId: undefined, mobileImageUrl: '', mobileImageAlt: '' });
               }
             )
+          ),
+          createElement(
+            PanelBody,
+            {
+              title: __('Anchor / ID sekcji', 'yourenglishcoachtheme'),
+              initialOpen: false,
+            },
+            createElement(TextControl, {
+              label: __('ID sekcji (anchor)', 'yourenglishcoachtheme'),
+              help: __('Np. opinie-google — wpisz #id-sekcji w URL przycisku CTA innej sekcji.', 'yourenglishcoachtheme'),
+              value: attributes.anchorId || '',
+              onChange: function (value) {
+                setAttributes({ anchorId: value });
+              },
+            })
           )
         ),
         createElement(
@@ -248,7 +268,7 @@
               : createElement(
                   'div',
                   { className: 'yec-parallax-image__placeholder' },
-                  __('Wybierz obraz, aby aktywowac sekcje parallax.', 'yourenglishcoachtheme')
+                  __('Wybierz obraz, aby aktywować sekcję parallax.', 'yourenglishcoachtheme')
                 )
           ),
           null

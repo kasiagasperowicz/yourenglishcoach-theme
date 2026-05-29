@@ -101,19 +101,17 @@ window.addEventListener('resize', () => {
 	}
 });
 
-const reviewSections = document.querySelectorAll('.yec-google-reviews');
-
-reviewSections.forEach((section) => {
-	const track = section.querySelector('.yec-google-reviews__track');
-	const viewport = section.querySelector('.yec-google-reviews__viewport');
-	const prevBtn = section.querySelector('.yec-google-reviews__btn--prev');
-	const nextBtn = section.querySelector('.yec-google-reviews__btn--next');
+function createCarousel(section, cardSelector, getVisibleCount, selectors) {
+	const track = section.querySelector(selectors.track);
+	const viewport = section.querySelector(selectors.viewport);
+	const prevBtn = section.querySelector(selectors.prevBtn);
+	const nextBtn = section.querySelector(selectors.nextBtn);
 
 	if (!track || !viewport || !prevBtn || !nextBtn) {
 		return;
 	}
 
-	const sourceCards = Array.from(track.querySelectorAll('.yec-google-reviews__card')).map((card) => card.cloneNode(true));
+	const sourceCards = Array.from(track.querySelectorAll(cardSelector)).map((card) => card.cloneNode(true));
 	if (!sourceCards.length) {
 		return;
 	}
@@ -127,19 +125,13 @@ reviewSections.forEach((section) => {
 	let isDragging = false;
 	let suppressClick = false;
 
-	const getVisibleCount = () => {
-		if (window.innerWidth <= 760) return 1;
-		if (window.innerWidth <= 1100) return 2;
-		return 3;
-	};
-
 	const getGap = () => {
 		const styles = window.getComputedStyle(track);
 		return parseFloat(styles.columnGap || styles.gap || '18') || 18;
 	};
 
 	const getStep = () => {
-		const card = track.querySelector('.yec-google-reviews__card');
+		const card = track.querySelector(cardSelector);
 		if (!card) {
 			return 0;
 		}
@@ -333,6 +325,31 @@ reviewSections.forEach((section) => {
 	});
 
 	rebuildLoop();
+}
+
+document.querySelectorAll('.yec-google-reviews').forEach((section) => {
+	createCarousel(section, '.yec-google-reviews__card', () => {
+		if (window.innerWidth <= 760) return 1;
+		if (window.innerWidth <= 1100) return 2;
+		return 3;
+	}, {
+		track: '.yec-google-reviews__track',
+		viewport: '.yec-google-reviews__viewport',
+		prevBtn: '.yec-google-reviews__btn--prev',
+		nextBtn: '.yec-google-reviews__btn--next',
+	});
+});
+
+document.querySelectorAll('.yec-benefits-section').forEach((section) => {
+	createCarousel(section, '.yec-benefits-section__card', () => {
+		if (window.innerWidth <= 760) return 1;
+		return 2;
+	}, {
+		track: '.yec-benefits-section__track',
+		viewport: '.yec-benefits-section__viewport',
+		prevBtn: '.yec-benefits-section__btn--prev',
+		nextBtn: '.yec-benefits-section__btn--next',
+	});
 });
 
 const parallaxItems = [
